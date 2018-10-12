@@ -59,9 +59,9 @@ class Endcard extends Phaser.State {
 
         // this.hintButton = new HintButton(this.game, this.wordGrid);
         // this.game.add.existing(this.hintButton);
-
+        this.game.world.sendToBack(this.background);
         // this.game.world.bringToTop(this.cta);
-        // this.game.world.bringToTop(this.ctaLayer);
+        this.game.world.bringToTop(this.ctaLayer);
         // this.game.world.bringToTop(this.cookieWord);
         // this.game.world.bringToTop(this.winMessage);
         // this.game.world.bringToTop(this.logo);

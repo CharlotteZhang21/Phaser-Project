@@ -50,7 +50,7 @@ PiecSettings.highlightColor = '#00f82c'; //cookie box color
 PiecSettings.stackLetterStyle = {
     fontWeight: "bold",
     fontFamily: PiecSettings.fontFamily,
-    color: ['#660000'], // if there is no gradient, leave only one color in the array
+    color: ['#771a1a'], // if there is no gradient, leave only one color in the array
     stroke: 'black', // if there is no stroke, can delete it
     shadow: {
         x: 2,
@@ -76,7 +76,7 @@ PiecSettings.words = [
     ['N', 'O', 'M', 'O', 'Y', 'L', 'E'],
 ];
 
-PiecSettings.preFilledWords = ["candy", "lime", "lemon",]; 
+PiecSettings.goals = ["candy", "lime", "lemon",]; 
 PiecSettings.preFilledLettersCoordinates = [ //For individual letters
     // [10,0],
     // [0,5],
