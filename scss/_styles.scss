@@ -1,0 +1,734 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-width: 100% auto;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: black;
+    /*background-image: url(../assets/bg.jpg);*/
+}
+
+canvas {
+    display: block;
+    cursor: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+#bottom-container {
+    position: absolute;
+    transition: all 0.2s ease-in-out;
+}
+
+#bottom-container #client-footer {
+    position: absolute;
+    text-align: center;
+    margin: auto;
+    z-index: 900;
+}
+
+#bottom-container #client-footer img {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+
+#bottom-container.full {
+    opacity: 0;
+}
+
+.preload-font {
+    position: absolute;
+    bottom: -1000%;
+}
+
+#goal {
+    width: 35vw;
+    height: 10vw;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+#hand {
+    width: 10vw;
+    height: 10vw;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+#hint-button {
+    width: 19%;
+    top: 46%;
+    left: 1%;
+}
+
+
+
+
+/*
+ * IEC elements (not being used in the canvas) ------------------------------------------------------------
+ */
+
+.item {
+    position: absolute;
+    margin: auto;
+}
+
+.item img {
+    width: 100%;
+}
+
+#frame {
+    z-index: 100;
+    width: 100vw;
+    top: 10vw;
+}
+
+
+
+
+/*
+ * PIEC elements sizing and positioning -------------------------------------------------------------------
+ */
+
+.layout-item {
+    position: absolute;
+    margin: auto;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.layout-item img {
+    width: 100%;
+}
+
+#game {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    top: 0;
+    z-index: 10;
+}
+
+#spin-button img {
+    width: 100%;
+}
+
+#cascade {
+    width: 100vw;
+    height: 5vw;
+    left: 0;
+    right: 0;
+    top: 0%;
+}
+
+#money-counter {
+    width: 70vw;
+    height: 10vw;
+    /*background: white;*/
+    top: 1vh;
+    left: 0;
+    right: 0;
+}
+
+#big-pudding {
+    width: 42vw;
+    height: 42vw;
+    left: 0;
+    right: 0;
+    top: 40vh;
+}
+
+#big-donut {
+    width: 42vw;
+    height: 42vw;
+    left: -2vw;
+    top: 52vh;
+}
+
+#win-message {
+    width: 90%;
+    left: 0;
+    right: 0;
+    top: 30%;
+}
+
+#change-button {
+    width: 8vw;
+    height: 8vw;
+}
+
+#ok-button {
+    width: 20vw;
+    height: 20vw;
+}
+
+#selection-menu {
+    width: 90vw;
+}
+
+#cta-background {
+    width: 100%;
+    z-index: 1;
+    bottom: 0;
+    height: 13%;
+}
+
+@media all and (orientation: landscape) {
+
+    #logo {
+        width: 40%;
+        top: 5%;
+    }
+
+    #win-message {
+        width: 55%;
+        /*height: 50vw;*/
+        top: 37%;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    #hint-button {
+        width: 11%;
+        top: auto;
+        bottom: 21%;
+        left: 1%;
+    }
+}
+
+@media all and (orientation: portrait) and (min-width: 768px) {
+
+    #goal {
+        width: 25vw;
+    }
+
+    #win-message {
+        width: 75vw;
+        height: 40vw;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+
+    #selection-menu {
+        width: 75vw;
+    }
+
+    #ok-button {
+        width: 15vw;
+        height: 15vw;
+    }
+}
+
+@media all and (orientation:landscape) and (min-height: 768px) {
+    #ok-button {
+        width: 10vw;
+        height: 10vw;
+    }
+}
+
+
+
+
+
+/* Debug mode settings for PIEC containers ---------------------------------------------------*/
+
+.debug {
+    #logo {
+        background: lightcoral;
+        opacity: .3;
+        border: 1px solid white;
+    }
+
+    #logo-final {
+        background: lightcoral;
+        opacity: .5;
+        border: 1px solid white;
+    }
+
+    #cinderella-container {
+        background: rgba(0, 200, 0, .25);
+        border: 1px solid white;
+    }
+
+    #game-grid {
+        background-color: rgba(254, 66, 66, .25);
+        border: 1px solid white;
+    }
+
+    #win-counter,
+    #win-counter-final {
+        background-color: lightyellow;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #coin-effect-area {
+        background-color: lawngreen;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #coin-cascade-area {
+        background-color: fuchsia;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #coin-stack-area {
+        background-color: gold;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #win-counter-background,
+    #win-counter-background-final {
+        background-color: cyan;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #spin-overlay {
+        background: black;
+        opacity: 0.4;
+        border: 1px solid white;
+    }
+
+    #spin-button {
+        background: white;
+        opacity: 0.5;
+        border: 1px solid white;
+    }
+
+    #cta-container,
+    #cta-container-final {
+        background: pink;
+        opacity: 0.5;
+        border: 1px solid white;
+    }
+}
+
+
+
+
+/*
+ * --------------------------------------------------------------------------------------------------------
+ */
+
+#wrap {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    background-color: #7C3A24;
+}
+
+#header {
+    width: 100%;
+    height: 20%;
+    z-index: 1;
+    left: 0;
+    right: 0;
+}
+
+#top-background {
+    width: 100vw;
+    height: 62.5vw;
+    top: 0;
+    position: absolute;
+    margin: auto;
+    z-index: 10;
+}
+
+#top-background img {
+    width: 100%;
+}
+
+#logo {
+    width: 90%;
+    /*height: 20vw;*/
+    top: 12%;
+    left: 0;
+    right: 0;
+}
+
+#tiles-area {
+    width: 100%;
+    top: -2%;
+    left: 0;
+    right: 0;
+}
+
+#board-background {
+    width: 100%;
+    height: 40%;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#cookie-word {
+    width: 0%;
+    top: 45%;
+    left: 0;
+    right: 0;
+    height: 7%;
+}
+
+#deco-01 {
+    width: 25%;
+    top: -1%;
+    left: -1%;
+}
+
+#deco-02 {
+    width: 20%;
+    top: 50%;
+    left: auto;
+    right: -3%;
+}
+
+#deco-03 {
+    width: 20%;
+    top: 55%;
+    left: -2%;
+}
+
+#fx-container-1 {
+    width: 13vh;
+    height: 55vh;
+    top: 43vh;
+    left: 30vw;
+    right: 0;
+}
+
+#fx-container-2 {
+    width: 13vh;
+    height: 55vh;
+    top: 43vh;
+    right: 30vw;
+}
+
+#fx-container-3 {
+    width: 13vh;
+    height: 55vh;
+    top: 50vh;
+    left: 10vw;
+    right: 0;
+}
+
+#fx-container-4 {
+    width: 13vh;
+    height: 55vh;
+    top: 46vh;
+    right: 60vw;
+}
+
+#fx-container-5 {
+    width: 13vh;
+    height: 55vh;
+    top: 50vh;
+    left: 80vw;
+    right: 0;
+}
+
+#fx-container-6 {
+    width: 13vh;
+    height: 55vh;
+    top: 50vh;
+    left: -25vw;
+    right: 0;
+}
+
+#spin-button {
+    top: 30%;
+    left: 0;
+    right: 0;
+    width: 40%;
+    height: 10vw;
+    z-index: 2000;
+}
+
+#spin-overlay {
+    width: 95vw;
+    height: 47.5vw;
+    left: 0;
+    right: 0;
+    top: calc(23.5vh + 47.5vw);
+    pointer-events: none;
+}
+
+#bottom-container {
+    width: 100%;
+    height: 25%;
+    bottom: 0;
+}
+
+#bottom-container #client-footer {
+    bottom: 8%;
+    height: 50%;
+    width: 70%;
+    left: 0;
+    right: 0;
+}
+
+#cta-container,
+#cta-container-final,
+#cta-container-final-2 {
+    width: 65%;
+    height: 10%;
+    left: 0;
+    right: 0;
+    bottom: 2%;
+}
+
+#cta-container-final {
+    width: 75%;
+    bottom: 17%;
+}
+
+#cta-container-final-2 {
+    width: 80%;
+    bottom: 16%;
+}
+
+#hand {
+    width: 18%;
+    left: 0;
+    right: 0;
+}
+
+#top-bar {
+    width: 100vw;
+    height: 10vw;
+    left: 0;
+    right: 0;
+    top: 1vw;
+}
+
+@media all and (orientation: landscape) {
+    #header {
+        width: 50%;
+        left: 0;
+        right: 0;
+    }
+    #logo {
+        width: 45%;
+        height: 35vw;
+        right: 0;
+        left: 0;
+        top: 5%;
+    }
+    #logo-final {
+        width: 40vw;
+        top: 5vh;
+        left: auto;
+        right: 2.5vw;
+    }
+
+    #tiles-area {
+        width: 58%;
+        top: -8%;
+        left: 0%;
+        right: auto;
+    }
+
+    #cookie-word {
+        height: 10%;
+        top: 5%;
+    }
+
+    #cta-background {
+        width: 50%;
+        left: 0;
+        right: 0;
+    }
+
+    #instructions {
+        width: 47vw;
+        height: 5vw;
+        bottom: 23vh;
+        left: 2vw;
+        right: auto;
+    }
+
+    #money-counter {
+        width: 40vw;
+        height: 5vw;
+        left: auto;
+        right: 7vw;
+        top: 2vh;
+    }
+
+    #cta-container {
+        width: 38%;
+        height: 10vw;
+        right: 0;
+        left: 0;
+        bottom: 4%;
+        -webkit-transform: none;
+        transform: none;
+    }
+
+    #cta-container-final,
+    #cta-container-final-2 {
+        width: 40%;
+        height: 10vw;
+        bottom: 8%;
+        transform: none;
+        -webkit-transform: none;
+    }
+
+    #hand {
+        width: 20vh;
+        height: 20vh;
+    }
+
+    #game-background {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+
+    #top-background {
+        width: 50vw;
+        height: 31.5vw;
+        left: auto;
+        right: 0;
+    }
+
+    #board-background {
+        width: 50%;
+        left: auto;
+        right: -5%;
+        transform: none;
+        top: -15%;
+        /*bottom: 45%;*/
+    }
+
+    #deco-01 {
+        width: 20%;
+    }
+
+    #deco-02 {
+        width: 15%;
+    }
+
+    #deco-03 {
+        width: 18%;
+    }
+}
+
+@media all and (min-width: 768px) and (orientation: portrait) {
+    #logo {
+        width: 70%;
+        top: 15%;
+    }
+    #header {
+        width: 65%;
+    }
+    #hand {
+        width: 10%;
+    }
+    #tiles-area {
+        height: 1%;
+        width: 74%;
+        top: -2%;
+    }
+    #hint-area {
+        height: 1%;
+        top: 45%;
+        width: 73%;
+    }
+    #board-background {
+        width: 115%;
+        top: 40%;
+    }
+    #cta-container {
+        width: 50%;
+        bottom: 3%;
+    }
+    #cta-container-final {
+        width: 60%;
+        bottom: 15%;
+    }
+    #cta-background {
+        height: 15%;
+    }
+}
+
+@media all and (min-height: 768px) and (orientation: landscape) {
+    #board-background {
+        top: 0%;
+    }
+    #tiles-area {
+        width: 56%;
+        top: 12%;
+    }
+    #hand {
+        width: 10%;
+    }
+    #cta-container-final {
+        bottom: 12%;
+    }
+    #logo {
+        width: 55%;
+        top: 10%;
+    }
+}
+
+
+
+
+/* iphone X */
+
+@media (min-aspect-ratio: 724/354) and (orientation: landscape) {
+    #header {
+        width: 40%;
+    }
+    #logo {
+        width: 40%;
+        top: 0;
+    }
+    /*#tiles-area {
+        width: 35%;
+        top: 16%;
+    }*/
+    #cta-container {
+        width: 33%;
+        height: 9vw;
+        bottom: 2.5%;
+    }
+    /*#board-background {
+        bottom: 50%;
+    }*/
+    #hint-area {
+        top: 60%;
+    }
+    #win-message {
+        width: 50%;
+        top: 35%;
+    }
+}
