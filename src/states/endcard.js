@@ -46,8 +46,8 @@ class Endcard extends Phaser.State {
         // this.cta = new CtaButton(this.game, this.ctaLayer, this.winMessage, this.logo);
         // this.game.add.existing(this.cta);
 
-        // this.cookieWord = new CookieWord(this.game);
-        // this.game.add.existing(this.cookieWord);
+        this.cookieWord = new CookieWord(this.game);
+        this.game.add.existing(this.cookieWord);
 
         // this.wordGrid = new WordGrid(this.game, this.cta);
         // this.game.add.existing(this.wordGrid);

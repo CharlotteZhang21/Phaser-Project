@@ -5,7 +5,7 @@ import * as CustomPngSequencesRenderer from '../utils/custom-png-sequences-rende
 class CookiePan extends Phaser.Group {
     constructor(game, cookieWord) {
         super(game);
-        // this.cookieWord = cookieWord;
+        this.cookieWord = cookieWord;
         
         this.game.input.onUp.add(this.onUp, this);
         
@@ -152,9 +152,31 @@ class CookiePan extends Phaser.Group {
 
     }
 
+    checkWordIsCorrect(){
+        var flag = false;
+        for (var i = 0; i < goals.length; i++) {
+            if(goals[i] == this.letters){
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+    wordFlyToGoal(){
+        //get the holes
+        //fly to goal
+    }
+
+
     // hands up when Word finished!
     onUp() {
         this.moveStart = false;
+
+        //if word is correct fly the word to the goal
+        //fall down the other blocks
+        if(this.checkWordIsCorrect()){
+            this.wordFlyToGoal();
+        }
  
         for (var i = 0; i < this.tempSelectedBlocksCoordinates.length; i++) {
             
@@ -165,6 +187,7 @@ class CookiePan extends Phaser.Group {
             this.blockArray[coordinate.row][coordinate.column].children[1].alpha = 1;
         }
         this.letters = '';
+        this.cookieWord.clearLetters();
         this.tempSelectedBlocksCoordinates = [];
     }
 
@@ -230,12 +253,14 @@ class CookiePan extends Phaser.Group {
                 block.children[1].alpha = 0;
 
                 this.letters += block.key;
+                this.cookieWord.updateBox(this.letters);
                 
             }
         }
         
     }
 
+    //TODO animating the block falling down
     // animate() {
     //     this.inputLocked = true;
     //     if (this.game.global.windowHeight > this.game.global.windowWidth) {

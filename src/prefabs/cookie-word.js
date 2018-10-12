@@ -12,58 +12,93 @@ class CookieWord extends Phaser.Group {
 
         ContainerUtil.fitInContainerHeight(this, 'cookie-word');
         this.initialX = this.x;
-        this.letterWidth = 0;
+        // this.letterWidth = 0;
     }
 
     createBox() {
         this.background = this.game.add.graphics(0, 0);
-        this.backgroundColor = "0xEBEECC";
+        this.backgroundColor = PiecSettings.highlightColor;
         if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.wordBoxDefault !== undefined) {
             this.backgroundColor = PiecSettings.colorPalette.wordBoxDefault;
         }
         this.background.beginFill(this.backgroundColor);
+
+        
+
         this.background.drawRoundedRect(0, 0, 1, 120, 90);
         this.background.alpha = 0;
         this.background.anchor.set(0.5);
         this.add(this.background);
-
+        this.boxHeight = this.background.height;
+        //TODO, Add gradient colour to the box
         this.coloredBox = this.game.add.graphics(0, 0);
         this.add(this.coloredBox);
     }
 
     updateBox(word) {
+        console.log(word);
         this.alpha = 1;
         this.clearLetters();
 
-        for (var i = 0; i < word.length; i++) {
-            var letterAssetName = word[i];
+        // for (var i = 0; i < word.length; i++) {
+        //     var letterAssetName = word[i];
 
-            if (PiecSettings.useAlternativeAssetForSolvedLetters) {
-                letterAssetName = word[i] + "-2";
-            }
+        var fontWeight = 'bold',
+            fontSize,
+            fontFamily = PiecSettings.fontFamily,
+            fontColor = [PiecSettings.fontColor],
+            fontStroke = null,
+            strokeThickness = null,
+            fontShadow = null,
+            anchorX = 0.5,
+            anchorY = 0.5;
 
-            var letter = new Phaser.Sprite(this.game, 0, 0, letterAssetName);
-            letter.anchor.set(0.5, 0);
-            this.add(letter);
-            letter.scale.y = 0.65 * this.background.height / letter.height;
-            letter.scale.x = letter.scale.y;
-            if (i == 0) {
-                this.letterWidth = letter.width;
-            }
-            letter.y += this.background.height * .175;
-            letter.x = 30 + this.letterWidth * i + this.letterWidth / 2;
-            this.letters.push(letter);
-        }
+        var fontStyle =  PiecSettings.stackLetterStyle;
+
+        fontWeight = fontStyle.fontWeight;
+        fontSize = this.boxHeight * 0.6;
+        fontFamily = fontStyle.fontFamily;
+        fontColor = fontStyle.color;
+        fontStroke = fontStyle.stroke || null;
+        strokeThickness = fontStyle.strokeThickness || null;
+        fontShadow = fontStyle.shadow || null;
+        anchorX = fontStyle.anchor.x || .5;
+        anchorY = fontStyle.anchor.y || .5;
+
+        
+
+        var style = {
+            font: fontWeight + " " + fontSize + "px " + fontFamily,
+        };
+        this.text = new Phaser.Text(this.game, 0, 0, word, style);
+        this.text.anchor.set(0.5);
+        // this.text.scale.y = this.background.height / this.text.height;
+        // this.text.scale.x = this.text.scale.y;
+
 
         this.background.clear();
-        if (this.coloredBox != null)
-        	this.coloredBox.clear();
 
         this.background.beginFill(this.backgroundColor);
-        this.background.drawRoundedRect(0, 0, 60 + word.length * this.letterWidth, 120, 90);
+        this.background.drawRoundedRect(0, 0, this.text.width * 1.5, this.boxHeight, 90);
         this.background.alpha = 0.95;
         this.background.anchor.set(0.5);
 
+        this.text.x = this.background.width / 2;
+        this.text.y = this.background.height / 2;
+
+        var gradient = this.text.context.createLinearGradient(0, 0, 0, this.text.height);
+
+        if (fontColor !== undefined && fontColor.length > 0) {
+            for (var i = 0; i < fontColor.length; i++) {
+                var index = i / fontColor.length;
+                gradient.addColorStop(index, fontColor[i]);
+            }
+        }
+        this.text.fill = gradient;
+
+        this.add(this.text);
+        //     this.letters.push(letter);
+        // }
         this.x = this.initialX - this.width/2;
     }
 
@@ -78,10 +113,10 @@ class CookieWord extends Phaser.Group {
     }
 
     clearLetters() {
-        for (var i = 0; i < this.letters.length; i++) {
-            this.letters[i].destroy();
-        }
-        this.letters = [];
+
+        if(this.text != null)
+            this.text.destroy();
+        this.background.clear();
     }
 
     colorBox(word, color) {

@@ -13,11 +13,11 @@ PiecSettings.fontColor = "#ffffff";
 PiecSettings.fontFamily = "Contemporary"; //Make sure that this font is on the css and that there is a div that uses it. (preload-font div)
 
 PiecSettings.colorPalette = {
-    default: "0xf6a200",
+    default: "0x00f82c",
     correct: "0x44AD12",
     incorrect: "0xe3442d",
     repeated: "0xf6a200",
-    wordBoxDefault: "0xEBEECC",
+    wordBoxDefault: ["0x00f82c"],
 };                          //Used by the lines and box
 
 PiecSettings.useAlternativeAssetForSolvedLetters = false; //Can use alternative asset for letters on the board (as opposed to letters on the pan). This will be the letter with "-2" behind
