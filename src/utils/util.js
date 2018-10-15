@@ -124,3 +124,15 @@ export function extend( defaults, options ) {
 export function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+export function printTwoLevelArray(array) {
+    var newArray = "";
+
+    for(var i = 0; i < array.length; i++ ){
+        for (var j = 0; j < array[i].length; j++) {
+            newArray += array[i][j].key || '-';
+        }
+        newArray += '\n';
+    }
+    console.log(newArray);
+}

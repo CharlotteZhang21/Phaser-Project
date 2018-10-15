@@ -49,8 +49,8 @@ class Endcard extends Phaser.State {
         this.cookieWord = new CookieWord(this.game);
         this.game.add.existing(this.cookieWord);
 
-        // this.wordGrid = new WordGrid(this.game, this.cta);
-        // this.game.add.existing(this.wordGrid);
+        this.wordGrid = new WordGrid(this.game, this.cta);
+        this.game.add.existing(this.wordGrid);
 
         this.cookiePan = new CookiePan(this.game, this.cookieWord);
         this.game.add.existing(this.cookiePan);

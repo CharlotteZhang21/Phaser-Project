@@ -9,27 +9,32 @@ class WordGrid extends Phaser.Group {
 
         this.game.global.inputLocked = false;
 
-        this.background = new Phaser.Sprite(game, 0, 0, 'letters-background');
-        this.add(this.background);
+        this.targetWords = [];
+        this.createPlaceHolder();
+        // this.preFillWords();
 
-        this.coordsToBoxCookie = [];
-        this.wordsToBoxCookies = [];
+        // ContainerUtil.fitInContainer(this, "tiles-area");
 
-        this.createWords();
-        this.preFillWords();
+        // this.fxLayer = new Phaser.Group(this.game);
+        // this.game.world.bringToTop(this.fxLayer);
+        // this.fxLayer.x = this.x;
+        // this.fxLayer.y = this.y;
+        // this.fxLayer.scale.x = this.scale.x;
+        // this.fxLayer.scale.y = this.scale.y
 
-        ContainerUtil.fitInContainer(this, "tiles-area");
-
-        this.fxLayer = new Phaser.Group(this.game);
-        this.game.world.bringToTop(this.fxLayer);
-        this.fxLayer.x = this.x;
-        this.fxLayer.y = this.y;
-        this.fxLayer.scale.x = this.scale.x;
-        this.fxLayer.scale.y = this.scale.y
-
-        console.log(this.wordsToBoxCookies);
+        // console.log(this.wordsToBoxCookies);
 
         this.completedWords = 0;
+    }
+
+    createPlaceHolder() {
+        var targetWordGrp = new Phaser.Group(this.game);
+        for (var i = 0; i < PiecSettings.goals.length; i++) {
+            var length = PiecSettings.goals[i].length;
+            for(var h = 0; h < length; h++) {
+
+            }
+        }        
     }
 
     highlightNextWord() {

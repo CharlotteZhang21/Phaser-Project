@@ -36,7 +36,7 @@ class CookieWord extends Phaser.Group {
     }
 
     updateBox(word) {
-        console.log(word);
+        // console.log(word);
         this.alpha = 1;
         this.clearLetters();
 

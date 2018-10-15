@@ -73,10 +73,10 @@ PiecSettings.words = [
     ['-', '-', '-', '-', 'A', '-', '-'],
     ['-', '-', '-', '-', 'N', '-', '-'],
     ['-', '-', 'L', 'I', 'D', 'M', '-'],
-    ['N', 'O', 'M', 'O', 'Y', 'L', 'E'],
+    ['N', 'O', 'M', 'E', 'Y', 'L', 'E'],
 ];
 
-PiecSettings.goals = ["candy", "lime", "lemon",]; 
+PiecSettings.goals = ["CANDY", "LEMON", "LIME", ]; // case sensitive  
 PiecSettings.preFilledLettersCoordinates = [ //For individual letters
     // [10,0],
     // [0,5],
