@@ -18,17 +18,13 @@ class CtaButton extends Phaser.Group {
 
         this.button = new Phaser.Sprite(this.game, 0, 0, 'cta', 0);
         this.initialCtaWidth = this.button.width;
-        this.button.anchor.set(0.5, 0.5);
-
-        ContainerUtil.fitInContainer(this.button, "cta-container");
+        
+        ContainerUtil.fitInContainer(this.button, "cta-container", 0.5, 0.5);
 
         this.ctaLayer.add(this.button);
 
         this.button.bringToTop();
         this.game.world.bringToTop(this.ctaLayer);
-
-        this.button.x += this.button.width / 2;
-        this.button.y += this.button.height / 2;
 
         this.button.inputEnabled = true;
         this.button.input.useHandCursor = true;

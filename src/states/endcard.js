@@ -43,8 +43,8 @@ class Endcard extends Phaser.State {
         this.logo = new Logo(this.game);
         this.game.add.existing(this.logo);
 
-        // this.cta = new CtaButton(this.game, this.ctaLayer, this.winMessage, this.logo);
-        // this.game.add.existing(this.cta);
+        this.cta = new CtaButton(this.game, this.ctaLayer, this.winMessage, this.logo);
+        this.game.add.existing(this.cta);
 
         this.cookieWord = new CookieWord(this.game);
         this.game.add.existing(this.cookieWord);
@@ -52,10 +52,11 @@ class Endcard extends Phaser.State {
         this.wordGrid = new WordGrid(this.game, this.cta);
         this.game.add.existing(this.wordGrid);
 
-        this.cookiePan = new CookiePan(this.game, this.cookieWord);
+        this.cookiePan = new CookiePan(this.game, this.cookieWord, this.wordGrid);
         this.game.add.existing(this.cookiePan);
 
         // this.tooltipLayer = this.game.add.group();
+        this.wordGrid.animateTitle();
 
         // this.hintButton = new HintButton(this.game, this.wordGrid);
         // this.game.add.existing(this.hintButton);

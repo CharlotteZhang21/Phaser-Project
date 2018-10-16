@@ -7,7 +7,7 @@ export function fitInContainer(object, containerName, anchorX = 0, anchorY = 0) 
 
     if (object.anchor !== undefined) {
         object.anchor.x = anchorX;
-        object.anchor.y = anchorY
+        object.anchor.y = anchorY;
     }
 
     object.x = containerX + containerWidth * anchorX;
@@ -16,15 +16,20 @@ export function fitInContainer(object, containerName, anchorX = 0, anchorY = 0) 
     object.scale.y = object.scale.x;
 }
 
-export function fitInContainerHeight(object, containerName) {
+export function fitInContainerHeight(object, containerName, anchorX = 0, anchorY = 0) {
 	var container = document.getElementById(containerName);
 	var containerWidth = container.offsetWidth * window.devicePixelRatio;
 	var containerHeight = container.offsetHeight * window.devicePixelRatio;
 	var containerX = container.getBoundingClientRect().left * window.devicePixelRatio;
 	var containerY = container.getBoundingClientRect().top * window.devicePixelRatio;
 
-	object.x = containerX;
-	object.y = containerY;
+    if (object.anchor !== undefined) {
+        object.anchor.x = anchorX;
+        object.anchor.y = anchorY;
+    }
+
+	object.x = containerX + containerWidth * anchorX;
+	object.y = containerY + containerHeight * anchorY;
 	object.scale.y = containerHeight / object.height;
 	object.scale.x = object.scale.y;
 }

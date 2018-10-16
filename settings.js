@@ -39,10 +39,17 @@ PiecSettings.useAlternativeAssetForSolvedLetters = false; //Can use alternative 
 // ];
 
 PiecSettings.autoPlay = true;
-// PiecSettings.autoPlayWord = "unwary";
+PiecSettings.autoPlayWord = {
+    startRow: 0,
+    endRow: 4,
+    startColumn: 4,
+    endColumn: 4,
+}; 
 
-PiecSettings.connectionLine = "line"; //"line"
+// PiecSettings.connectionLine = "line"; //"line"
 PiecSettings.circleLetter = true;
+
+PiecSettings.gameCategory = 'SOUR TASTING';
 
 
 // for wordstacks letters

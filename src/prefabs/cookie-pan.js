@@ -4,14 +4,15 @@ import * as AnimationsUtil from '../utils/animations-util';
 import * as CustomPngSequencesRenderer from '../utils/custom-png-sequences-renderer.js';
 
 class CookiePan extends Phaser.Group {
-    constructor(game, cookieWord) {
+    constructor(game, cookieWord, wordGrid) {
         super(game);
         this.cookieWord = cookieWord;
+        this.wordGrid = wordGrid;
         
         this.game.input.onUp.add(this.onUp, this);
         
         this.letters = "";
-        this.moveStart = false
+        this.moveStart = false;
 
 
         this.containerName = 'board-background';
@@ -19,8 +20,138 @@ class CookiePan extends Phaser.Group {
         this.blockArray = [];
         this.tempSelectedBlocksCoordinates = [];
 
+        this.handTutorial = true;
+
         this.createStacks();
+
+        this.createHand();
+        
     }
+
+    createHand() {
+        this.hand = new Phaser.Sprite(this.game, 0, 0, 'hand');
+        this.hand.anchor.set(0.85, 0.85);
+        this.hand.angle = -15;
+        if (this.game.global.windowWidth < this.game.global.windowHeight) {
+            this.hand.scale.x = ContainerUtil.getContainerWidth(this.containerName) * .18 / this.hand.width;
+            this.hand.scale.y = this.hand.scale.x;
+        } else {
+            this.hand.scale.x = ContainerUtil.getContainerWidth(this.containerName) * .27 / this.hand.width;
+            this.hand.scale.y = this.hand.scale.x;
+        }
+        this.add(this.hand);
+        this.hand.alpha = 0;
+
+        this.handInitialScale = this.hand.scale.x;
+
+
+        if (PiecSettings.autoPlay !== undefined && PiecSettings.autoPlay == true && this.handTutorial == true)
+            this.game.time.events.add(2500, function(){
+                this.handFollowWord(PiecSettings.autoPlayWord);   
+            }, this);
+
+    }
+
+    handFollowWord(coordinate) {
+        var startRow = coordinate.startRow,
+            endRow = coordinate.endRow,
+            startColumn = coordinate.startColumn,
+            endColumn = coordinate.endColumn;
+
+        
+        this.moveHandDuration = 1000;
+
+        var startingBlock = this.blockArray[startRow][startColumn];
+    
+        this.moveHandToBeforePress(startingBlock).onComplete.add(function() {
+            this.pressHand(startingBlock).onComplete.add(function(){
+
+                var endBlock = this.blockArray[endRow][endColumn];
+                this.moveHandTo(endBlock, this.moveHandDuration);
+                this.unpressHandAndMoveOutWithDelay(1000);                
+            }, this);
+
+
+        }, this);
+
+
+        // }
+        // }
+        // this.game.time.events.add(900 + this.moveHandDuration * word.length, function() {
+        //     this.onUpTutorial();
+        // }, this);
+        // this.game.time.events.add(900 + this.moveHandDuration * word.length + 1000, function() {
+        //     this.handTutorial = false;
+        //     this.inputLocked = false;
+        //     this.hand.destroy();
+        // }, this);
+    }
+
+    pressHand(cookie) {
+
+        this.handTutorial = true;
+
+        var tween = this.game.add.tween(this.hand.scale).to({
+            x: this.handInitialScale * .9,
+            y: this.handInitialScale * .9,
+        }, 650, Phaser.Easing.Quadratic.InOut, true, 0);
+
+        var initialX = this.hand.x;
+        var initialY = this.hand.y;
+        this.game.add.tween(this.hand).to({
+            angle: [-40, -50, -50],
+            // y: [initialY, initialY + 20, initialY + 20],
+            // x: [initialX + 10, initialX + 30, initialX + 30],
+        }, 650, Phaser.Easing.Quadratic.InOut, true, 0);
+
+        // this.game.time.events.add(700, function() {
+        //     this.onInputDownLetterTutorial(cookie);
+        // }, this);
+
+        return tween;
+    }
+
+    unpressHandAndMoveOutWithDelay(delay) {
+        this.game.time.events.add(delay, function() {
+            this.game.add.tween(this.hand.scale).to({
+                x: this.handInitialScale,
+                y: this.handInitialScale,
+            }, 400, Phaser.Easing.Quadratic.InOut, true, 0);
+
+            this.game.add.tween(this.hand).to({
+                angle: -5,
+                x: this.game.global.windowWidth * window.devicePixelRatio * this.scale.x + this.hand.width * 1.5,
+            }, 800, Phaser.Easing.Quadratic.InOut, true, 200);
+        }, this);
+    }
+
+    moveHandToWithDelay(cookie, delay) {
+        this.game.time.events.add(delay, function(){
+            this.moveHandTo(cookie);
+        }, this);
+    }
+
+    moveHandToBeforePress(cookie) {
+        var tween = this.game.add.tween(this.hand).to({
+            x: cookie.x + cookie.width/2 + this.hand.width * .9,
+            y: cookie.y + cookie.height/2 + this.hand.height * .1,
+            alpha: 1
+        }, 700, Phaser.Easing.Quadratic.InOut, true, 0);
+        this.game.add.tween(this.hand).to({
+            angle: -20,
+        }, 700, Phaser.Easing.Quadratic.InOut, true, 0);
+        return tween;
+    }
+
+    moveHandTo(cookie) {
+        var tween = this.game.add.tween(this.hand).to({
+            x: cookie.x + cookie.width / 2 + this.hand.width,
+            y: cookie.y + cookie.height / 2 + this.hand.height * .2,
+        }, this.moveHandDuration, Phaser.Easing.Linear.None, true, 0);
+        return tween;
+    }
+
+
 
     createStacks(){
 
@@ -50,11 +181,16 @@ class CookiePan extends Phaser.Group {
                 columnArray.push(block)
                 this.game.world.sendToBack(block);
 
+                var finalY = block.y;
+                block.y = -400;
+                this.game.add.tween(block).to({y: finalY}, 500, Phaser.Easing.Linear.InOut, true, 1200 - 100 * i + 50 * Math.random());
+
             }
 
             this.blockArray.push(columnArray);
 
         }
+
     }
 
 
@@ -111,7 +247,7 @@ class CookiePan extends Phaser.Group {
 
     }
 
-    createLetterText(block, letter) {
+    createLetterText(block, letter, color) {
 
         var fontWeight = 'bold',
             fontSize,
@@ -128,7 +264,14 @@ class CookiePan extends Phaser.Group {
         fontWeight = fontStyle.fontWeight;
         fontSize = block.height * 0.5;
         fontFamily = fontStyle.fontFamily;
-        fontColor = fontStyle.color;
+        
+        if(color==null)
+            fontColor = fontStyle.color;
+        else{
+            fontColor = [];
+            fontColor.push(color);
+        }
+
         fontStroke = fontStyle.stroke || null;
         strokeThickness = fontStyle.strokeThickness || null;
         fontShadow = fontStyle.shadow || null;
@@ -177,11 +320,12 @@ class CookiePan extends Phaser.Group {
     onUp() {
         this.moveStart = false;
 
-        //if word is correct fly the word to the goal
-        //repostion the other blocks
         if(this.checkWordIsCorrect()){
             this.wordFlyToGoal();
-            this.callOut();
+
+            this.game.time.events.add(1000, function(){
+                this.callOut();
+            }, this);
 
         }else{
             for (var i = 0; i < this.tempSelectedBlocksCoordinates.length; i++) {
@@ -215,10 +359,7 @@ class CookiePan extends Phaser.Group {
         var spriteName = 'callout_amazing';
         if( this.wordSelectionDirection == "downToUp" || this.wordSelectionDirection == "leftToRight") {
             spriteName = 'callout_spectacular';
-            console.log('hello');
         } 
-
-        console.log(spriteName);
         var callOutBg = new Phaser.Sprite(this.game, 0, 0, 'callout_bg');
         ContainerUtil.fitInContainer(callOutBg, 'win-message', 0.5, 0.5);
         var callOut = new Phaser.Sprite(this.game, 0, 0, spriteName);
@@ -252,44 +393,67 @@ class CookiePan extends Phaser.Group {
 
     wordFlyToGoal(){
         //destroy, get the holes and move other blocks
-        var flyingLetters = []; // for animation purpose
-
-            
-
+        var flyingLetters = []; // for animation purpose            
+        var completeLetter = this.letters;
+        // console.log()
         for (var i = this.tempSelectedBlocksCoordinates.length - 1; i >= 0; i--) {
 
             var coordinate = this.tempSelectedBlocksCoordinates[i];
             var block = this.blockArray[coordinate.row][coordinate.column]; // get the block from block array using the temp coordinates
 
             /*==== animate, expand and fly to goal === */
-            var clone = this.createLetterText(block.children[0], block.key);
+            var clone = this.createLetterText(block.children[0], block.key, '#fff');
 
             clone.x = block.x + block.width/2;
             clone.y = block.y + block.height/2;
-            this.game.add.existing(clone);
-            
             var blockInitScale = clone.scale.x;
+            var targetCoordinate = this.wordGrid.getPlaceHoldersCoordinates(completeLetter, i);
+            
+            var scaleT = targetCoordinate.h / clone.height * 0.8 ;
+            this.game.add.existing(clone);
+
             clone.scale.x = 0;
             clone.scale.y = 0;
+            
             this.game.add.tween(clone.scale).to({
-                    x: [blockInitScale * 1.25],
-                    y: [blockInitScale * 1.25],
-                }, 300, Phaser.Easing.Quadratic.InOut, true, 0);
+                    x: [blockInitScale * 1.25, blockInitScale * 1.5, scaleT],
+                    y: [blockInitScale * 1.25, blockInitScale * 1.5, scaleT],
+                }, 800, Phaser.Easing.Quadratic.InOut, true, 100);
             
             this.game.add.tween(clone).to({
-                y: -100,
-            }, 600, Phaser.Easing.Quadratic.InOut, true, 500 + 50 * i);
+                x: targetCoordinate.x,
+                y: targetCoordinate.y,
+            }, 600, Phaser.Easing.Quadratic.InOut, true, 500 + 50 * i)
+            .onComplete.add(function(e){
+                this.game.add.tween(e).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true, 0);
+            },this);
             
+           
             this.game.add.tween(block).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true, 0);
             /*==== end of animation === */
 
             /*==== move the blocks === */
-            var topBlock = null;
+            this.moveTheRestOfBlocks(coordinate, block);
+            /*==== end of move the blocks === */
+
+            block.destroy();
+
+        }
+
+        this.game.time.events.add(1000, function(){
+            this.wordGrid.turnGrid(completeLetter);
+        }, this);
+
+        
+
+    }
+    moveTheRestOfBlocks(coordinate, block){
+        var topBlock = null;
             var leftBlock = null;
             if(coordinate.row != 0){
                 topBlock = this.blockArray[coordinate.row-1][coordinate.column];
             
-                console.log(topBlock.key + "" + topBlock.used);
+                // console.log(topBlock.key + "" + topBlock.used);
             }
             if(coordinate.column != 0){
                 leftBlock = this.blockArray[coordinate.row][coordinate.column-1];
@@ -336,10 +500,6 @@ class CookiePan extends Phaser.Group {
                 Util.printTwoLevelArray(this.blockArray);
             }
 
-            block.destroy();
-
-        }
-
     }
 
     isInputOverLetter(mouseX, mouseY) {
@@ -362,20 +522,16 @@ class CookiePan extends Phaser.Group {
         return false;
     }
 
-    scaleLetterUp(letter) {
-        var initialScale = letter.initialScale;
-        this.game.add.tween(letter.scale).to({
-            x: initialScale * 1.05,
-            y: initialScale * 1.05,
-        }, 200, Phaser.Easing.Quadratic.InOut, true, 0);
-    }
  
     //Word started
     onInputDownLetter(letter) {
         
         this.moveStart = true;
+        if(this.handTutorial)
+            this.handTutorial = false;
 
     }
+
 
     update() {
         if(this.moveStart){
@@ -387,6 +543,10 @@ class CookiePan extends Phaser.Group {
             var canPushToTempArray = false;
             
             if(block != null) {
+
+                if(!this.handTutorial){
+                    this.game.add.tween(this.hand).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true, 0);
+                }
 
                 var coordinate = {
                     row: block.row,
@@ -427,6 +587,8 @@ class CookiePan extends Phaser.Group {
                     
                     var lastTempBlock = this.tempSelectedBlocksCoordinates[length - 1];
 
+                    console.log(block.key);
+
                     switch(this.wordSelectionDirection) {
                         case 'leftToRight': 
                             if (coordinate.column == (lastTempBlock.column-1)){
@@ -463,8 +625,11 @@ class CookiePan extends Phaser.Group {
 
                             if (coordinate.row == (lastTempBlock.row+1)){
                                 block.used = false;
+                                console.log("key" + block.key + block.used);
+                                console.log(lastTempBlock.column);
                                 block = this.blockArray[lastTempBlock.row+1][lastTempBlock.column];
                                 block.used = true;
+                                console.log("key" + block.key + block.used);
                                 coordinate = {
                                     row: block.row,
                                     column: block.column
@@ -505,30 +670,17 @@ class CookiePan extends Phaser.Group {
                     block.children[1].alpha = 0;
 
                     this.letters += block.key;
-                    console.log(this.letters);
+                    
                     this.cookieWord.updateBox(this.letters);
                 }
 
-                console.log(this.tempSelectedBlocksCoordinates);                
+
+
+
             }
         }
         
     }
-
-    //TODO animating the block falling down
-    // animate() {
-    //     this.inputLocked = true;
-    //     if (this.game.global.windowHeight > this.game.global.windowWidth) {
-    //         this.game.add.tween(this).to({
-    //             x: [-this.width],
-    //         }, 1400, Phaser.Easing.Quadratic.InOut, true, 0);
-    //     } else {
-    //         this.game.add.tween(this).to({
-    //             x: [this.game.global.windowWidth * window.devicePixelRatio + this.width],
-    //         }, 1400, Phaser.Easing.Quadratic.InOut, true, 0);
-    //     }
-
-    // }
 }
 
 export default CookiePan;

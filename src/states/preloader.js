@@ -40,6 +40,8 @@
          this.game.load.image('callout_spectacular', PiecSettings.assetsDir + 'callout_spectacular.png');
          this.game.load.image('callout_bg', PiecSettings.assetsDir + 'callout_bg.png');
 
+         this.game.load.image('wordGrid-bg', PiecSettings.assetsDir + 'wordGrid-bg.png');
+         
 
          this.game.global.animations = {};
 

@@ -9,7 +9,11 @@ class WordGrid extends Phaser.Group {
 
         this.game.global.inputLocked = false;
 
-        this.targetWords = [];
+        this.targetWords = {};
+        this.correctWords = {}; // it's the words that shows after the transition
+        this.categoryTitle = this.createTitle();
+
+
         this.createPlaceHolder();
         // this.preFillWords();
 
@@ -27,14 +31,184 @@ class WordGrid extends Phaser.Group {
         this.completedWords = 0;
     }
 
-    createPlaceHolder() {
-        var targetWordGrp = new Phaser.Group(this.game);
-        for (var i = 0; i < PiecSettings.goals.length; i++) {
-            var length = PiecSettings.goals[i].length;
-            for(var h = 0; h < length; h++) {
 
+    createTitle() {
+        var containerName = 'game-category';
+        var fontWeight = 'bold',
+            fontSize = ContainerUtil.getContainerHeight(containerName),
+            fontFamily = PiecSettings.fontFamily,
+            fontColor = ['#fff'],
+            fontStroke = null,
+            strokeThickness = null,
+            fontShadow = null;
+
+        var style = {
+            font: fontWeight + " " + fontSize + "px " + fontFamily,
+        };
+
+        var textField = new Phaser.Text(this.game, 0, 0, PiecSettings.gameCategory, style);
+        ContainerUtil.fitInContainer(textField, containerName, 0.5, 0.5);
+        var gradient = textField.context.createLinearGradient(0, 0, 0, textField.height);
+
+        if (fontColor !== undefined && fontColor.length > 0) {
+            for (var i = 0; i < fontColor.length; i++) {
+                var index = i / fontColor.length;
+                gradient.addColorStop(index, fontColor[i]);
             }
-        }        
+        }
+        textField.fill = gradient;
+        this.add(textField);
+
+        return textField;
+    }
+
+    animateTitle(){
+        var originalX = this.categoryTitle.x,
+            originalY = this.categoryTitle.y;
+        var originalScale = this.categoryTitle.scale.x;
+
+        var startingContainer = 'game-category-start';
+        
+        ContainerUtil.fitInContainer(this.categoryTitle, startingContainer, 0.5, 0.5);
+        this.categoryTitle.alpha = 0;
+        this.game.add.tween(this.categoryTitle).to({alpha: 1}, 500, Phaser.Easing.Quadratic.InOut, true, 0);
+        this.game.add.tween(this.categoryTitle).to({x: originalX, y: originalY}, 500, Phaser.Easing.Quadratic.InOut, true, 1000);
+        this.game.add.tween(this.categoryTitle.scale).to({x: [originalScale * 1.2, originalScale], y: [originalScale * 1.2, originalScale]}, 800, Phaser.Easing.Quadratic.InOut, true, 1000);
+    }
+
+    createPlaceHolder() {
+        
+
+        for (var i = 0; i < PiecSettings.goals.length; i++) {
+            
+            var targetWordGrp = new Phaser.Group(this.game);
+            var containerName = 'tiles-area-' + (i+1);
+            var circleSize = ContainerUtil.getContainerHeight(containerName);
+            // var panelX = ContainerUtil.getContainerX(containerName);
+            // var panelY = ContainerUtil.getContainerY(containerName);
+            var length = PiecSettings.goals[i].length;
+
+            var circleDistance = 0;
+
+
+            var correctWord = this.createCorrectWords(containerName, PiecSettings.goals[i]);
+            this.correctWords[PiecSettings.goals[i]] = correctWord;
+
+            for(var h = 0; h < length; h++) {
+                
+                var background = this.game.add.graphics(0, 0);
+                var backgroundColor = "0x000";
+                // if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.wordBoxDefault !== undefined) {
+                //     backgroundColor = PiecSettings.colorPalette.wordBoxDefault;
+                // }
+                
+                background.beginFill(backgroundColor);
+                background.drawCircle(0, 0, circleSize);
+                
+                background.alpha = 0.5;
+                background.x += h * circleSize + circleDistance + circleSize / 2;
+                background.y += circleSize/2;
+
+
+                background.key = PiecSettings.goals[i].charAt(h);
+            
+                targetWordGrp.add(background);
+
+                
+            }
+
+            ContainerUtil.fitInContainerHeight(targetWordGrp, containerName);
+            targetWordGrp.alpha = 0;
+            this.game.add.tween(targetWordGrp).to({alpha: 1}, 1000, Phaser.Easing.Quadratic.InOut, true, 1000 + i * 100);
+            this.targetWords[PiecSettings.goals[i]] = targetWordGrp;
+            
+        }   
+
+        
+    }
+
+    getPlaceHoldersCoordinates(word, childrenIndex){
+
+        var coordinate = {
+            x: this.targetWords[word].x + this.targetWords[word].children[childrenIndex].x,
+            y: this.targetWords[word].y + this.targetWords[word].children[childrenIndex].y,
+            w: this.targetWords[word].children[childrenIndex].width,
+            h: this.targetWords[word].children[childrenIndex].height,
+        }
+
+        return coordinate;
+    }
+
+    createCorrectWords(containerName, text){
+
+        var wordGrp = new Phaser.Group(this.game);
+
+        var wordBg = new Phaser.Sprite(this.game, 0, 0, 'wordGrid-bg');
+        wordBg.anchor.set(0.5);
+        ContainerUtil.fitInContainerHeight(wordBg, containerName, 0.5, 0.5);
+
+        wordGrp.add(wordBg);
+        var fontWeight = 'bold',
+            fontSize = wordGrp.height * 0.8,
+            fontFamily = PiecSettings.fontFamily,
+            fontColor = ['#fff'];
+
+        // console.log(fontSize);
+        var style = {
+            font: fontSize + 'px ' + fontFamily
+        };
+
+
+        var wordText = new Phaser.Text(this.game, 0, 0, text, style);
+        wordText.anchor.set(0.5);
+        wordText.x = wordBg.x;
+        wordText.y = wordBg.y;
+
+        // ContainerUtil.fitInContainer(wordText, containerName, 0.5, 0.5);
+        var gradient = wordText.context.createLinearGradient(0, 0, 0, wordText.height);
+
+        if (fontColor !== undefined && fontColor.length > 0) {
+            for (var i = 0; i < fontColor.length; i++) {
+                var index = i / fontColor.length;
+                gradient.addColorStop(index, fontColor[i]);
+            }
+        }
+        wordText.fill = gradient;
+        
+        wordGrp.add(wordText);
+
+        this.add(wordGrp);
+        wordGrp.alpha = 0;
+
+        return wordGrp;
+    }
+
+    turnGrid(word){
+       
+        var grid = this.targetWords[word];
+         // console.log(grid);
+        this.game.add.tween(grid).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true, 100)
+        .onComplete.add(function(){
+            
+        },this);
+
+        var correctWord = this.correctWords[word];
+
+        var correctWordBg = correctWord.children[0];
+        var correctWordText = correctWord.children[1];
+        var scale1 = correctWordBg.scale.x;
+        var scale2 = correctWordText.scale.x;
+
+        this.game.add.tween(correctWord).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 0);
+        this.game.add.tween(correctWordBg.scale).to({
+            x: [scale1 * 1.25, scale1],
+            y: [scale1 * 1.25, scale1],
+        }, 500, Phaser.Easing.Linear.None, true, 0);
+        this.game.add.tween(correctWordText.scale).to({
+            x: [scale2 * 1.25, scale2],
+            y: [scale2 * 1.25, scale2],
+        }, 500, Phaser.Easing.Linear.None, true, 0);
+        
     }
 
     highlightNextWord() {
