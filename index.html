@@ -23,6 +23,12 @@
         font-weight: normal;
         font-style: normal;
     }
+    @font-face {
+        font-family: 'asian';
+        src: url('jp-zh-ru-font.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
     </style>
     <!-- logo strike start -->
     <style>
@@ -89,10 +95,19 @@
         </div>
         <div class="layout-item" id="hand">
         </div>
+        
         <div class="layout-item" id="cta-container">
         </div>
+        <div class="layout-item" id="cta-container-text">
+        </div>
+
+
         <div class="layout-item" id="cta-container-final">
         </div>
+
+        <div class="layout-item" id="cta-container-text-final">
+        </div>
+
         <div class="layout-item" id="cta-container-final-2">
         </div>
         <div class="layout-item" id="cta-background">
@@ -115,6 +130,7 @@
     <!-- phaser requires fonts to be preloaded before they can be used "in game" -->
     <!-- note: you can add more fonts below -->
     <div class="preload-font" style="font-family: Contemporary;">.</div>
+    <div class="preload-font" style="font-family: asian;">.</div>
     <!-- build:remove -->
     <script src="http://localhost:35729/livereload.js"></script>
     <!-- /build -->

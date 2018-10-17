@@ -19,16 +19,18 @@ class WordGrid extends Phaser.Group {
 
         // ContainerUtil.fitInContainer(this, "tiles-area");
 
-        // this.fxLayer = new Phaser.Group(this.game);
-        // this.game.world.bringToTop(this.fxLayer);
-        // this.fxLayer.x = this.x;
-        // this.fxLayer.y = this.y;
-        // this.fxLayer.scale.x = this.scale.x;
-        // this.fxLayer.scale.y = this.scale.y
+        this.fxLayer = new Phaser.Group(this.game);
+        this.game.world.bringToTop(this.fxLayer);
+        this.fxLayer.x = this.x;
+        this.fxLayer.y = this.y;
+        this.fxLayer.scale.x = this.scale.x;
+        this.fxLayer.scale.y = this.scale.y
 
         // console.log(this.wordsToBoxCookies);
 
         this.completedWords = 0;
+
+        this.idleAnimate(this.targetWords[PiecSettings.goals[this.completedWords]]);   
     }
 
 
@@ -122,9 +124,22 @@ class WordGrid extends Phaser.Group {
             this.game.add.tween(targetWordGrp).to({alpha: 1}, 1000, Phaser.Easing.Quadratic.InOut, true, 1000 + i * 100);
             this.targetWords[PiecSettings.goals[i]] = targetWordGrp;
             
-        }   
+        }
 
         
+
+        
+    }
+
+    idleAnimate(group){
+        // console.log(group);
+        for(var i = 0; i < group.children.length; i++){
+            var scale = group.children[i].scale.x;
+            this.game.add.tween(group.children[i].scale).to({
+                x: [scale * 0.9, scale],
+                y: [scale * 0.9, scale]
+            }, 500, Phaser.Easing.Linear.InOut, true, i * 100).repeat(-1, 1000);
+        }
     }
 
     getPlaceHoldersCoordinates(word, childrenIndex){
@@ -187,19 +202,30 @@ class WordGrid extends Phaser.Group {
        
         var grid = this.targetWords[word];
          // console.log(grid);
+
         this.game.add.tween(grid).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true, 100)
         .onComplete.add(function(){
-            
+            this.game.global.tutorialCanceled = false;
+            if(++this.completedWords == PiecSettings.goals.length){
+
+                this.game.onBoardComplete.dispatch();
+            }else {
+                this.idleAnimate(this.targetWords[PiecSettings.goals[this.completedWords]]);  
+            }
         },this);
 
         var correctWord = this.correctWords[word];
 
         var correctWordBg = correctWord.children[0];
         var correctWordText = correctWord.children[1];
+
+        this.spawnStars(correctWordBg);
+
         var scale1 = correctWordBg.scale.x;
         var scale2 = correctWordText.scale.x;
 
         this.game.add.tween(correctWord).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 0);
+
         this.game.add.tween(correctWordBg.scale).to({
             x: [scale1 * 1.25, scale1],
             y: [scale1 * 1.25, scale1],
@@ -211,36 +237,9 @@ class WordGrid extends Phaser.Group {
         
     }
 
-    highlightNextWord() {
-        var word = this.getNextUnsolvedWord();
-        console.log(word);
-        var boxCookies = this.wordsToBoxCookies[word];
-        for (var i = 0; i < boxCookies.length; i++) {
-            if (boxCookies[i].letter.alpha < 1) {
-                this.game.add.tween(boxCookies[i].letter).to({
-                    alpha: 0.4,
-                }, 400, Phaser.Easing.Quadratic.InOut, true, 0);
-                var initialScale = boxCookies[i].initialLetterScale;
-                this.game.add.tween(boxCookies[i].letter.scale).to({
-                    x: [initialScale * 1.25, initialScale],
-                    y: [initialScale * 1.25, initialScale],
-                }, 600, Phaser.Easing.Quadratic.InOut, true, 0);
-            }
-        }
-    }
-
-    getNextUnsolvedWord() {
-        for (var property in this.wordsToBoxCookies) {
-            if (this.wordsToBoxCookies.hasOwnProperty(property)) {
-                var boxCookies = this.wordsToBoxCookies[property];
-                for (var i = 0; i < boxCookies.length; i++) {
-                    if (!boxCookies[i].revealed) {
-                        return property;
-                    }
-                }
-            }
-        }
-        return false;
+    getCompletedWordNum(){
+        console.log(this.completedWords)
+        return this.completedWords;
     }
 
     createWords() {
@@ -257,215 +256,6 @@ class WordGrid extends Phaser.Group {
                 }
             }
         }
-    }
-
-    createWordsAccross() {
-        var words = [];
-        for (var i = 0; i < PiecSettings.words.accross.length; i++) {
-            var xCoord = PiecSettings.words.accross[i][0];
-            var yCoord = PiecSettings.words.accross[i][1];
-            var word = PiecSettings.words.accross[i][2];
-            words[i] = this.createAccrossWord(word, xCoord, yCoord);
-        }
-        return words;
-    }
-
-    createWordsDown() {
-        var words = [];
-        for (var i = 0; i < PiecSettings.words.down.length; i++) {
-            var xCoord = PiecSettings.words.down[i][0];
-            var yCoord = PiecSettings.words.down[i][1];
-            var word = PiecSettings.words.down[i][2];
-            words[i] = this.createDownWord(word, xCoord, yCoord);
-        }
-        return words;
-    }
-
-    createAccrossWord(word, x, y) {
-        var wordLetters = [];
-        for (var i = 0; i < word.length; i++) {
-            var letter = word[i];
-            var boxCookie = new Phaser.Sprite(this.game, 0, 0, 'box-cookie-empty');
-            boxCookie.anchor.set(0.5);
-
-            this.scaleBoxCookie(boxCookie);
-            boxCookie.x = i * boxCookie.width + x * boxCookie.width + boxCookie.width / 2;
-            boxCookie.y = y * boxCookie.height + boxCookie.height / 2;
-            this.centerBoxCookieVertAndHor(boxCookie);
-
-            this.add(boxCookie);
-            this.addLetterToBoxCookie(boxCookie, letter);
-
-            wordLetters[i] = boxCookie;
-            this.coordsToBoxCookie[(x + i) + "," + y] = boxCookie;
-            // console.log("COOKIE at " + (x + i) + ", " + y + " - " + letter);
-            if (this.isPreFilled(x + i, y)) {
-                this.revealBoxCookieNoAnimation(boxCookie);
-            }
-        }
-        this.wordsToBoxCookies[word] = wordLetters;
-        return wordLetters;
-    }
-
-    addLetterToBoxCookie(boxCookie, letterName) {
-        if (PiecSettings.useAlternativeAssetForSolvedLetters) {
-            letterName += "-2";
-        }
-        var letter = new Phaser.Sprite(this.game, 0, 0, letterName);
-        letter.anchor.set(0.5);
-
-        var letterScaleInBoxCookie = 0.75;
-        if (PiecSettings.letterScaleInBoxCookie !== undefined) {
-            letterScaleInBoxCookie = PiecSettings.letterScaleInBoxCookie;
-        }
-
-        letter.scale.x = boxCookie.width / letter.width * letterScaleInBoxCookie;
-        letter.scale.y = letter.scale.x;
-        letter.x = boxCookie.x;
-        letter.y = boxCookie.y;
-        letter.alpha = 0;
-
-        this.add(letter);
-        boxCookie.letter = letter;
-        boxCookie.revealed = false;
-        boxCookie.initialLetterScale = letter.scale.x;
-    }
-
-    evaluateWord(word) {
-        var boxCookies = this.wordsToBoxCookies[word];
-        if (boxCookies) {
-            if (this.hasWordBeenRevealed(word)) {
-                return "repeated";
-            }
-            this.revealWord(word);
-            this.completedWords++;
-            return "correct";
-        }
-        return "incorrect";
-    }
-
-    allLettersRevealed() {
-        for (var property in this.coordsToBoxCookie) {
-            if (this.coordsToBoxCookie.hasOwnProperty(property)) {
-                var boxCookie = this.coordsToBoxCookie[property];
-                if (!boxCookie.revealed) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    revealWord(word) {
-        var boxCookies = this.wordsToBoxCookies[word];
-        for (var i = 0; i < boxCookies.length; i++) {
-            this.revealBoxCookieWithDelay(boxCookies[i], i * 170);
-        }
-    }
-
-    hasWordBeenRevealed(word) {
-        var boxCookies = this.wordsToBoxCookies[word];
-        for (var i = 0; i < boxCookies.length; i++) {
-            if (boxCookies[i].letter.alpha != 1) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    revealBoxCookieWithDelay(boxCookie, delay) {
-
-        boxCookie.revealed = true;
-
-        this.game.time.events.add(delay + 300, function() {
-            this.spawnStars(boxCookie);
-        }, this);
-
-        this.game.time.events.add(delay, function() {
-
-            this.game.time.events.add(20, function() {
-                this.revealBoxCookieNoAnimation(boxCookie);
-            }, this);
-
-            var initialScale = boxCookie.scale.x;
-
-            var tween = this.game.add.tween(boxCookie.scale).to({
-                x: [initialScale * 1.7, initialScale * 0.8, initialScale, initialScale],
-                y: [initialScale * 1.7, initialScale * 0.8, initialScale, initialScale]
-            }, 1500, Phaser.Easing.Quadratic.Out, true, 0);
-
-            var initialScale2 = boxCookie.letter.scale.x;
-            this.game.add.tween(boxCookie.letter.scale).to({
-                x: [initialScale2 * 1.7, initialScale2 * 0.8, initialScale2, initialScale2],
-                y: [initialScale2 * 1.7, initialScale2 * 0.8, initialScale2, initialScale2]
-            }, 1500, Phaser.Easing.Quadratic.Out, true, 0);
-
-        }, this);
-    }
-
-    revealBoxCookieNoAnimation(boxCookie) {
-        boxCookie.revealed = true;
-        boxCookie.letter.alpha = 1;
-        boxCookie.loadTexture('box-cookie-full', false, 0);
-    }
-
-    createDownWord(word, x, y) {
-        var wordLetters = [];
-        for (var i = 0; i < word.length; i++) {
-
-            var boxCookieExisting = this.coordsToBoxCookie[x + "," + (y + i)];
-
-            if (!boxCookieExisting) {
-                var letter = word[i];
-                var boxCookie = new Phaser.Sprite(this.game, 0, 0, 'box-cookie-empty');
-                boxCookie.anchor.set(0.5);
-
-                this.scaleBoxCookie(boxCookie);
-                boxCookie.x = x * boxCookie.width + boxCookie.width / 2;
-                boxCookie.y = y * boxCookie.height + i * boxCookie.height + boxCookie.height / 2;
-                this.centerBoxCookieVertAndHor(boxCookie);
-
-                this.add(boxCookie);
-                this.addLetterToBoxCookie(boxCookie, letter);
-
-                wordLetters[i] = boxCookie;
-                this.coordsToBoxCookie[x + "," + (y + i)] = boxCookie;
-
-                console.log("COOKIE at (" + x + ", " + (y + i) + ") - " + letter);
-                // console.log(this.coordsToBoxCookie);
-
-                if (this.isPreFilled(x, y + i)) {
-                    boxCookie.letter.alpha = 1;
-                    boxCookie.loadTexture('box-cookie-full', false, 0);
-                }
-            } else { //It already exists, so we just copy the reference!
-                wordLetters[i] = boxCookieExisting;
-            }
-        }
-        this.wordsToBoxCookies[word] = wordLetters;
-        return wordLetters;
-    }
-
-    isPreFilled(x, y) {
-        for (var i = 0; i < PiecSettings.preFilledLettersCoordinates.length; i++) {
-            if (x == PiecSettings.preFilledLettersCoordinates[i][0] &&
-                y == PiecSettings.preFilledLettersCoordinates[i][1]) {
-                return true;
-            }
-        }
-    }
-
-    scaleBoxCookie(boxCookie) {
-        boxCookie.scale.x = this.width * 0.85 / PiecSettings.wordsGridWidth / boxCookie.width;
-        boxCookie.scale.y = boxCookie.scale.x;
-    }
-
-    centerBoxCookieVertAndHor(boxCookie) {
-        boxCookie.x += (this.width - boxCookie.width * PiecSettings.wordsGridWidth) / 2;
-        boxCookie.y += (this.background.height - boxCookie.height * PiecSettings.wordsGridHeight) / 2;
-        //Recenter with anchor point!
-        boxCookie.x -= (this.background.width * (0.5 - PiecSettings.boardAnchor[0])) / 2;
-        boxCookie.y -= (this.background.height * (0.5 - PiecSettings.boardAnchor[1])) / 2;
     }
 
     playAnimationOnWord(x, y) {
@@ -595,65 +385,6 @@ class WordGrid extends Phaser.Group {
         }
     }
 
-    danceLetter(letter, duration) {
-        this.game.add.tween(letter).to({
-            angle: [-10, 10, -10, 0],
-        }, duration, Phaser.Easing.Quadratic.InOut, true, 0);
-    }
-
-    flyLetterWithDelay(letter, finalX, finalY, delay) {
-        this.game.time.events.add(delay, function() {
-            this.flyLetter(letter, finalX, finalY);
-        }, this);
-    }
-
-    flyLetter(letter, finalX, finalY) {
-        var letterClone = new Phaser.Group(this.game);
-
-        var letterBackground = new Phaser.Sprite(this.game, 0, 0, this.getTileImage(letter.xCoord, letter.yCoord));
-        letterBackground.scale.x = letter.letterBackground.scale.x;
-        letterBackground.scale.y = letter.letterBackground.scale.y;
-        letterBackground.x = letter.letterBackground.x;
-        letterBackground.y = letter.letterBackground.y;
-        letterClone.add(letterBackground);
-
-        letterClone.x = letter.x;
-        letterClone.y = letter.y;
-
-        var style = {
-            font: this.fontSize + "px " + PiecSettings.fontFamily
-        };
-        var letterText = new Phaser.Text(this.game, 0, 0, PiecSettings.wordsLettersMissing[letter.xCoord][letter.yCoord] == "?" ? " " : PiecSettings.words[letter.xCoord][letter.yCoord], style);
-        letterText.anchor.set(0.5);
-        letterText.fill = "#001b80";
-        letterText.x = letter.letterText.x;
-        letterText.y = letter.letterText.y;
-
-        letterText.scale.x = letter.letterText.scale.x;
-        letterText.scale.y = letter.letterText.scale.y;
-
-        letterClone.add(letterText);
-
-        this.game.world.bringToTop(letterClone);
-        this.game.world.bringToTop(this.fxLayer);
-
-        var initialScale = letterClone.scale.x;
-
-        var flyTween = this.game.add.tween(letterClone).to({
-            x: finalX,
-            y: finalY,
-        }, 1000, Phaser.Easing.Quadratic.InOut, true, 0);
-
-        this.game.add.tween(letterClone.scale).to({
-            x: initialScale * .5,
-            y: initialScale * .5,
-        }, 1000, Phaser.Easing.Quadratic.InOut, true, 0);
-
-        flyTween.onComplete.add(function() {
-            letterClone.destroy();
-        }, this);
-    }
-
     playAnimationOnBoard() {
         for (var i = 0; i < this.words.length; i++) {
             for (var j = 0; j < this.words[i].length; j++) {
@@ -667,45 +398,6 @@ class WordGrid extends Phaser.Group {
         }
     }
 
-    raiseLetter(letter) {
-
-        this.game.world.bringToTop(letter);
-
-        var letterXBackground = letter.letterBackground.x;
-        var letterYBackground = letter.letterBackground.y;
-
-        var initialScaleBackground = letter.letterBackground.scale.x;
-        var initialWidth = letter.letterBackground.width;
-        var initialHeight = letter.letterBackground.height;
-
-        this.game.add.tween(letter.letterBackground.scale).to({
-            x: initialScaleBackground * 1.1,
-            y: initialScaleBackground * 1.1
-        }, 1000, Phaser.Easing.Quadratic.InOut, true);
-
-        this.game.add.tween(letter.letterBackground).to({
-            x: letterXBackground + initialWidth / 2 - initialWidth * 1.1 / 2,
-            y: letterYBackground + initialHeight / 2 - initialHeight * 1.1 / 2 - (3 - letter.xCoord) * initialHeight * 0.07,
-        }, 1000, Phaser.Easing.Quadratic.InOut, true);
-
-        var letterXText = letter.letterText.x;
-        var letterYText = letter.letterText.y;
-
-        var initialScaleText = letter.letterText.scale.x;
-        var initialWidthText = letter.letterText.width;
-        var initialHeightText = letter.letterText.height;
-
-        this.game.add.tween(letter.letterText.scale).to({
-            x: initialScaleText * 1.1,
-            y: initialScaleText * 1.1
-        }, 1000, Phaser.Easing.Quadratic.InOut, true);
-
-        this.game.add.tween(letter.letterText).to({
-            x: letterXBackground + initialWidth / 2 - initialWidth * 1.1 / 2 + initialWidth * 1.1 / 2,
-            y: letterYBackground + initialHeight / 2 - initialHeight * 1.1 / 2 - (3 - letter.xCoord) * initialHeight * 0.07 + initialHeight * 1.1 / 2,
-        }, 1000, Phaser.Easing.Quadratic.InOut, true);
-
-    }
 
     spawnStars(letter) {
         for (var i = 0; i < 20; i++) {
@@ -713,7 +405,7 @@ class WordGrid extends Phaser.Group {
             var star = new Phaser.Sprite(this.game, 0, 0, starOrParticle);
             this.fxLayer.add(star);
             star.anchor.set(0.5);
-            star.scale.x = letter.width * .45 / star.width * (Math.random());
+            star.scale.x = letter.width * .3 / star.width * (Math.random());
             star.scale.y = star.scale.x;
 
             star.x = letter.x;
@@ -726,7 +418,7 @@ class WordGrid extends Phaser.Group {
             var initialX = star.x;
 
             var angle = Math.random() * 360;
-            var radius = (letter.width + letter.width * Math.random()) * .75;
+            var radius = (letter.width + letter.width * Math.random()) * .5;
 
             var finalX = radius * Math.cos(angle * Math.PI / 180) + initialX;
             var finalY = radius * Math.sin(angle * Math.PI / 180) + initialY;
@@ -736,7 +428,7 @@ class WordGrid extends Phaser.Group {
             var finalScale = initialScale * Math.random();
 
             var delay = i * 10;
-            var duration = Math.random() * 300 + 800;
+            var duration = Math.random() * 300 + 1800;
 
             AnimationsUtil.starFloatWithDelay(this.game, star, finalX, finalY, finalScale, duration, delay);
         }

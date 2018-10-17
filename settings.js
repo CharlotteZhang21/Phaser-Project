@@ -7,7 +7,7 @@ PiecSettings.version = "-";
 // }
 
 PiecSettings.timer = true;
-PiecSettings.asoi = true;
+PiecSettings.asoi = false;
 
 PiecSettings.fontColor = "#ffffff";
 PiecSettings.fontFamily = "Contemporary"; //Make sure that this font is on the css and that there is a div that uses it. (preload-font div)
@@ -19,6 +19,8 @@ PiecSettings.colorPalette = {
     repeated: "0xf6a200",
     wordBoxDefault: ["0x00f82c"],
 };                          //Used by the lines and box
+
+PiecSettings.ctaBackground = true; // set false when you don't want bg;
 
 PiecSettings.useAlternativeAssetForSolvedLetters = false; //Can use alternative asset for letters on the board (as opposed to letters on the pan). This will be the letter with "-2" behind
                                                         // E.g.: "a.png" alternative version would be "a-2.png".
@@ -39,21 +41,27 @@ PiecSettings.useAlternativeAssetForSolvedLetters = false; //Can use alternative 
 // ];
 
 PiecSettings.autoPlay = true;
-PiecSettings.autoPlayWord = {
-    startRow: 0,
-    endRow: 4,
-    startColumn: 4,
-    endColumn: 4,
-}; 
+PiecSettings.hint = [{
+        start: {r: 0 ,c: 4},
+        end: {r: 4 ,c: 4},
+    },{
+        start: {r: 4 ,c: 5},
+        end: {r: 4 ,c: 1},
+    },{
+        start: {r: 4 ,c: 3},
+        end: {r: 4 ,c: 6},
+    }
+]; 
 
 // PiecSettings.connectionLine = "line"; //"line"
-PiecSettings.circleLetter = true;
+// PiecSettings.circleLetter = true;
 
 PiecSettings.gameCategory = 'SOUR TASTING';
 
 
 // for wordstacks letters
 PiecSettings.highlightColor = '#00f82c'; //cookie box color
+
 PiecSettings.stackLetterStyle = {
     fontWeight: "bold",
     fontFamily: PiecSettings.fontFamily,
@@ -96,14 +104,14 @@ PiecSettings.preFilledLettersCoordinates = [ //For individual letters
     // [13,3],
 ];
 
-PiecSettings.letterScaleInBoxCookie = 0.86; //How much of the width a letter takes inside the boxCookie
+// PiecSettings.letterScaleInBoxCookie = 0.86; //How much of the width a letter takes inside the boxCookie
 
-PiecSettings.panAnchor = [0.5,0.49]; //Anchor of circle where letters are positioned, as ratio of total width/height
-PiecSettings.panRadius = 0.28;       //Specifies how big the radius of the circle where letters are positioned is
-                                     //as a ratio of the total height of the pan background.
-// PiecSettings.panAnchorLandscape = [0.5,0.49];
-PiecSettings.panRadiusLandscape = 0.2;
-PiecSettings.boardAnchor = [0.49,0.7];
+// PiecSettings.panAnchor = [0.5,0.49]; //Anchor of circle where letters are positioned, as ratio of total width/height
+// PiecSettings.panRadius = 0.28;       //Specifies how big the radius of the circle where letters are positioned is
+//                                      //as a ratio of the total height of the pan background.
+// // PiecSettings.panAnchorLandscape = [0.5,0.49];
+// PiecSettings.panRadiusLandscape = 0.2;
+// PiecSettings.boardAnchor = [0.49,0.7];
 
 /////// FINAL OVERLAY SCREEN SETTINGS ///////
 // PiecSettings.finalOverlay = {

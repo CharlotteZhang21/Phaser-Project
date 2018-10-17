@@ -29,8 +29,10 @@
          this.game.load.image('background', PiecSettings.assetsDir + 'bg.jpg');
 
          this.game.load.image('cta', PiecSettings.assetsDir + 'download.png');
+         this.game.load.image('cta-2', PiecSettings.assetsDir + 'download-2.png');
 
          this.game.load.image('hand', PiecSettings.assetsDir + 'hand.png');
+         this.game.load.image('hint-button', PiecSettings.assetsDir + 'hint.png');
 
          this.game.load.image('letterBg', PiecSettings.assetsDir + 'letter-bg.png');
 
@@ -41,6 +43,8 @@
          this.game.load.image('callout_bg', PiecSettings.assetsDir + 'callout_bg.png');
 
          this.game.load.image('wordGrid-bg', PiecSettings.assetsDir + 'wordGrid-bg.png');
+         this.game.load.image('star-particle', PiecSettings.assetsDir + "star_particle.png");
+         this.game.load.image('spark-particle', PiecSettings.assetsDir + "spark_particle.png");
          
 
          this.game.global.animations = {};

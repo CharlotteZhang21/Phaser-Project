@@ -8,6 +8,7 @@ import CookiePan from '../prefabs/cookie-pan';
 import CookieWord from '../prefabs/cookie-word';
 import HintButton from '../prefabs/hint-button';
 import * as CustomPngSequencesRenderer from '../utils/custom-png-sequences-renderer.js';
+import * as AnimationUtil from '../utils/animations-util';
 
 class Endcard extends Phaser.State {
 
@@ -25,6 +26,8 @@ class Endcard extends Phaser.State {
         this.game.global.windowWidth = document.body.clientWidth;
         this.game.global.windowHeight = document.body.clientHeight;
 
+
+        this.fxLayer = new Phaser.Group(this.game);
         // this.tooltipsLayer = this.game.add.group();
 
         // this.goal = new Goal(this.game, 3);
@@ -32,7 +35,7 @@ class Endcard extends Phaser.State {
         this.game.add.existing(this.background);
 
         // this.game.onWordComplete.add(this.onWordComplete, this);
-        // this.game.onBoardComplete.add(this.onBoardComplete, this);
+        this.game.onBoardComplete.add(this.onBoardComplete, this);
 
         this.ctaLayer = new Phaser.Group(this.game);
         this.game.add.existing(this.ctaLayer)
@@ -58,12 +61,23 @@ class Endcard extends Phaser.State {
         // this.tooltipLayer = this.game.add.group();
         this.wordGrid.animateTitle();
 
-        // this.hintButton = new HintButton(this.game, this.wordGrid);
-        // this.game.add.existing(this.hintButton);
+        this.hintButton = new HintButton(this.game, this.cookiePan, this.wordGrid);
+        this.game.add.existing(this.hintButton);
+
+        
+
+        this.game.world.sendToBack(this.fxLayer);
         this.game.world.sendToBack(this.background);
         // this.game.world.bringToTop(this.cta);
         this.game.world.bringToTop(this.ctaLayer);
-        // this.game.world.bringToTop(this.cookieWord);
+
+
+        // this.cta.spawnCookies();
+        // this.spawnCookies();
+        this.game.time.events.loop(Phaser.Timer.SECOND * 3, function(){
+            this.spawnCookies();
+        }, this);
+        this.game.world.bringToTop(this.cookiePan);
         // this.game.world.bringToTop(this.winMessage);
         // this.game.world.bringToTop(this.logo);
 
@@ -75,15 +89,20 @@ class Endcard extends Phaser.State {
         // this.game.global.tutorialCanceled = false;
 
         // // this.tooltip.moveHandToItem(this.game.global.items[8]);
-        // var waitForAutoplay = 3800;
+        var waitForAutoplay = 2500;
         // if (this.game.global.windowWidth > this.game.global.windowHeight){
         //     waitForAutoplay = 2400;
         // }
-        // this.game.time.events.add(waitForAutoplay, function() {
-        //     if (!this.game.global.tutorialCanceled) {
-        //         this.background.playInitialHandTutorial();
-        //     }
-        // }, this);
+        this.game.time.events.add(waitForAutoplay, function() {
+            if (!this.game.global.tutorialCanceled) {
+                this.cookiePan.handFollowWord(PiecSettings.hint[0]);
+            }
+        }, this);
+
+        this.game.time.events.add(3000, function(){
+            this.hintButton.show();
+
+        }, this);
 
         // this.game.time.events.add(3800, function() {
         //     this.cta.animate();
@@ -112,90 +131,64 @@ class Endcard extends Phaser.State {
         // render code here
     }
 
-    // onGridComplete() {
-    //     this.cta.solveWordOnCta();
-    //     this.game.world.bringToTop(this.darkOverlay);
-    //     this.game.world.bringToTop(this.winMessage);
-    //     this.game.world.bringToTop(this.logo);
-    //     this.game.world.bringToTop(this.ctaLayer);
-    //     this.game.world.bringToTop(this.wordGrid.fxLayer);
-    //     this.game.time.events.add(900, function() {
-    //         //Show win message!
-    //         this.winMessage.showWinMessage();
-    //         this.darkOverlay.show();
-    //         this.cta.animate();
-    //     }, this);
-    // }
+    spawnCookies() {
+        for (var i = 0; i < 4; i++) {
+            var spriteName = 'star-particle';
+            // var spriteName = Math.random() > 0.45 ? 'star-cookie' : 'box-cookie-full';
+            // spriteName = Math.random() > 0.95 ? 'cherry' : spriteName;
 
-    // onWordComplete(word) {
-    //     var evaluationResult = this.wordGrid.evaluateWord(word);
-    //     if (evaluationResult == "correct") {
-    //         console.log("correct word!");
-    //         var pathColor = "0x44AD12";
-    //         if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.correct !== undefined) {
-    //             pathColor = PiecSettings.colorPalette.correct;
-    //         }
-    //         this.cookiePan.changePathColor(pathColor);
-    //         this.cookiePan.fadePath();
-    //         this.cookiePan.bounceLetters(word);
+            var cookie = new Phaser.Sprite(this.game, 0, 0, spriteName);
+            cookie.scale.x = this.game.global.windowWidth * (Math.random()+1) * 0.1/ cookie.width;
+            cookie.scale.y = cookie.scale.x;
+            cookie.anchor.set(0.5);
 
-    //         this.cookieWord.colorBox(word, pathColor);
-    //         this.cookieWord.fadeBox();
+            cookie.x = this.game.global.windowWidth * Math.random() * window.devicePixelRatio;
+            cookie.y = this.game.global.windowHeight * Math.random() * window.devicePixelRatio;
 
-    //         if (this.wordGrid.allLettersRevealed()) {
-    //             this.game.onBoardComplete.dispatch();
-    //         }
-    //     } else if (evaluationResult == "incorrect") {
-    //         var pathColor = "0xe3442d";
-    //         if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.incorrect !== undefined) {
-    //             pathColor = PiecSettings.colorPalette.incorrect;
-    //         }
-    //         console.log("incorrect word!");
-    //         this.cookiePan.changePathColor(pathColor);
-    //         this.cookiePan.fadePath();
+            cookie.angle = Math.random() * 90 - 45;
 
-    //         this.cookieWord.colorBox(word, pathColor);
-    //         this.cookieWord.fadeBox();
+            cookie.alpha = 0.5 + (Math.random() + 0.5);
 
-    //     } else if (evaluationResult == "repeated") {
-    //         var pathColor = "0xf6a200";
-    //         if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.repeated !== undefined) {
-    //             pathColor = PiecSettings.colorPalette.repeated;
-    //         }
-    //         console.log("repeated word");
-    //         this.cookiePan.changePathColor(pathColor);
-    //         this.cookiePan.fadePath();
+            var duration = 7000;
+            // var dissapearAfter = 4000;
 
-    //         this.cookieWord.colorBox(word, pathColor);
-    //         this.cookieWord.fadeBox();
+            // AnimationsUtil.spawnAndDissapear(this.game, cookie, duration + Math.random() * 100, i * 800, dissapearAfter + 1000 * Math.random(), Phaser.Easing.Quadratic.InOut);
+            AnimationUtil.spawnAndFalling(this.game, cookie, duration + Math.random() * 100, i * 1000, Phaser.Easing.Quadratic.InOut); 
+            // cookie.alpha = 0;
 
-    //     }
-    // }
 
-    // onBoardComplete() {
-    //     this.hintButton.animate();
-    //     this.game.time.events.add(800, function() {
-    //         this.wordGrid.animate();
-    //         this.cookiePan.animate();
-    //         this.game.time.events.add(400, function() {
-    //             this.cta.showDecos();
-    //         }, this);
-    //         this.game.time.events.add(1000, function() {
-    //             this.cta.animate();
-    //             this.game.time.events.add(200, function() {
-    //                 this.logo.animate();
-    //             }, this);
-    //             if (PiecSettings.asoi !== undefined && PiecSettings.asoi == true) {
-    //                 this.game.time.events.add(1000, function() {
-    //                     doSomething('download');
-    //                 }, this);
-    //             }
-    //         }, this);
-    //     }, this);
-    //     this.game.time.events.add(600, function() {
-    //         this.winMessage.showWinMessage();
-    //     }, this);
-    // }
+            this.fxLayer.add(cookie);
+
+            cookie.sendToBack();
+        }
+
+    }
+
+    onBoardComplete() {
+        this.hintButton.animate();
+        console.log('completed');
+        this.game.time.events.add(800, function() {
+            this.wordGrid.animate();
+            // this.cookiePan.animate();
+            this.game.time.events.add(400, function() {
+                // this.cta.showDecos();
+            }, this);
+            this.game.time.events.add(1000, function() {
+                this.cta.animate();
+                this.game.time.events.add(200, function() {
+                    this.logo.animate();
+                }, this);
+                if (PiecSettings.asoi !== undefined && PiecSettings.asoi == true) {
+                    this.game.time.events.add(1000, function() {
+                        doSomething('download');
+                    }, this);
+                }
+            }, this);
+        }, this);
+        this.game.time.events.add(600, function() {
+            // this.winMessage.showWinMessage();
+        }, this);
+    }
 
 }
 

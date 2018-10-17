@@ -270,9 +270,9 @@ a {
   right: 0; }
 
 #logo {
-  width: 90%;
+  width: 85%;
   /*height: 20vw;*/
-  top: 12%;
+  top: 45%;
   left: 0;
   right: 0; }
 
@@ -283,6 +283,13 @@ a {
   pointer-events: none; }
 
 .layout-item img {
+  width: 100%; }
+
+.item {
+  position: absolute;
+  margin: auto; }
+
+.item img {
   width: 100%; }
 
 #game {
@@ -469,9 +476,21 @@ a {
   right: 0;
   bottom: 2%; }
 
+#cta-container-text,
+#cta-container-text-final {
+  width: 50%;
+  height: 7%;
+  left: 0;
+  right: 0;
+  bottom: 4%; }
+
 #cta-container-final {
   width: 75%;
   bottom: 17%; }
+
+#cta-container-text-final {
+  width: 57%;
+  bottom: 19%; }
 
 #cta-container-final-2 {
   width: 80%;

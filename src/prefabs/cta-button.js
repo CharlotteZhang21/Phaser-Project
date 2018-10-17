@@ -1,7 +1,7 @@
 import * as ContainerUtil from '../utils/container-util';
 import * as AnimationsUtil from '../utils/animations-util';
 import * as CustomPngSequencesRenderer from '../utils/custom-png-sequences-renderer.js';
-
+import * as Localisation from '../utils/auto-localisation-util';
 class CtaButton extends Phaser.Group {
     constructor(game, ctaLayer, winMessage, logo) {
         super(game);
@@ -10,9 +10,9 @@ class CtaButton extends Phaser.Group {
         this.winMessage = winMessage;
         this.logo = logo;
 
-        // if (this.game.global.windowWidth < this.game.global.windowHeight) {
-        //     this.createBackground();
-        // }
+        if (this.game.global.windowWidth < this.game.global.windowHeight) {
+            this.createBackground();
+        }
 
         this.fxLayer = new Phaser.Group(this.game);
 
@@ -21,9 +21,12 @@ class CtaButton extends Phaser.Group {
         
         ContainerUtil.fitInContainer(this.button, "cta-container", 0.5, 0.5);
 
-        this.ctaLayer.add(this.button);
+  
+        this.downloadText = this.placeDownloadText('cta-container-text');
 
-        this.button.bringToTop();
+        this.ctaLayer.add(this.button);
+        this.ctaLayer.add(this.downloadText);
+       
         this.game.world.bringToTop(this.ctaLayer);
 
         this.button.inputEnabled = true;
@@ -67,51 +70,54 @@ class CtaButton extends Phaser.Group {
 
         var myBitmap = new Phaser.BitmapData(this.game, 'myBitmap', containerWidth, containerHeight);
         var grd = myBitmap.context.createLinearGradient(0, 0, 0, containerHeight);
-        grd.addColorStop(0, "#4835c4");
-        grd.addColorStop(0.1, "#412cad");
-        grd.addColorStop(0.5, "#362288");
-        grd.addColorStop(1, "#362288");
+        grd.addColorStop(0, "#da8d2c");
+        grd.addColorStop(0.4, "#d84e01");
+        grd.addColorStop(0.8, "#e23d05");
+        grd.addColorStop(1, "#e23d05");
         myBitmap.context.fillStyle = grd;
         myBitmap.context.fillRect(0, 0, containerWidth, containerHeight);
 
         this.background = this.game.add.sprite(containerX, containerY, myBitmap, null, this);
-        console.log(this.x + ", " + this.y);
-    }
-
-    fitInContainer() {
-        this.container = document.getElementById("cta-container");
-        this.containerWidth = this.container.offsetWidth * window.devicePixelRatio;
-        this.containerHeight = this.container.offsetHeight * window.devicePixelRatio;
-        var containerX = this.container.getBoundingClientRect().left * window.devicePixelRatio;
-        var containerY = this.container.getBoundingClientRect().top * window.devicePixelRatio;
-
-        this.x = containerX;
-        this.y = containerY;
-
-        this.scale.x = this.containerWidth / this.button.width;
-        this.scale.y = this.scale.x;
+        this.background.alpha = 0.9;
     }
 
     animate() {
 
-        var finalContainer = document.getElementById("cta-container-final");
-        var finalContainerWidth = finalContainer.offsetWidth * window.devicePixelRatio;
-        var finalContainerX = finalContainer.getBoundingClientRect().left * window.devicePixelRatio;
-        var finalContainerY = finalContainer.getBoundingClientRect().top * window.devicePixelRatio;
-
-        console.log(finalContainerWidth);
-        var newScale = finalContainerWidth / this.initialCtaWidth;
-        var initialScale = this.button.scale.x;
-
-        var positionTween = this.game.add.tween(this.button).to({ x: finalContainerX + this.button.width / initialScale * newScale / 2, y: finalContainerY + this.button.height / initialScale * newScale / 2 }, 1100, Phaser.Easing.Back.Out, true, 0);
-        var scaleTween = this.game.add.tween(this.button.scale).to({ x: newScale, y: newScale }, 900, Phaser.Easing.Quadratic.InOut, true, 0);
-        // this.spawnStars();
-        this.spawnCookies();
+        var finalContainer = "cta-container-final";
+        var finalContainerText = "cta-container-text-final";
+        var delay = 0,
+            duration = 900;
+        ContainerUtil.moveToContainer(this.button, finalContainer, delay, duration, Phaser.Easing.Quadratic.InOut, null, true);
+        ContainerUtil.moveToContainer(this.downloadText, finalContainerText, delay, duration, Phaser.Easing.Quadratic.InOut, null, true);
+     
+        // this.spawnCookies();
 
         this.game.time.events.add(1100, function() {
             this.startPulseIdleAnimation();
         }, this);
     }
+
+    placeDownloadText(container) {
+
+        var innerBox = .8;
+        var offsetVertical = 0.1;
+    
+
+        var text = Localisation.getLocalisedCta().text.toUpperCase();
+        var lang = Localisation.getLocalisedCta().lang;
+        var font = Localisation.getLocalisedCta().font;
+        var style = {
+            font: this.button.height + "px " + font,
+            fill: "#fff",
+        }
+
+        var downloadText = new Phaser.Text(this.game, 0, 0, text, style);
+
+        ContainerUtil.bestFit(downloadText, container, 0.5, 0.5);
+        return downloadText;
+
+    }
+
 
     startPulseIdleAnimation() {
 
@@ -121,16 +127,22 @@ class CtaButton extends Phaser.Group {
         this.buttonOver.y = this.button.y;
         this.buttonOver.scale.x = this.button.width / this.buttonOver.width;
         this.buttonOver.scale.y = this.buttonOver.scale.x;
+
         this.ctaLayer.add(this.buttonOver);
+        this.downloadText.bringToTop();
 
         this.buttonOver.alpha = 0;
 
         var initialScale = this.buttonOver.scale.x;
+        var initialTextScale = this.downloadText.scale.x;
 
         var pulseTween = this.game.add.tween(this.buttonOver).to({ alpha: 1 }, 600, Phaser.Easing.Quadratic.InOut, true, 600).loop().yoyo(true, 0);
         this.game.add.tween(this.buttonOver.scale).to({ x: initialScale * 1.05, y: initialScale * 1.05 }, 600, Phaser.Easing.Quadratic.InOut, true, 600).loop().yoyo(true, 0);
         this.game.add.tween(this.button.scale).to({ x: initialScale * 1.05, y: initialScale * 1.05 }, 600, Phaser.Easing.Quadratic.InOut, true, 600).loop().yoyo(true, 0);
-
+        this.game.add.tween(this.downloadText.scale).to({
+            x: initialTextScale * 1.05,
+            y: initialTextScale * 1.05
+        }, 600, Phaser.Easing.Quadratic.InOut, true, 600).loop().yoyo(true, 0);
         this.game.time.events.add(200, function() {
             // this.spawnStars();
             this.spawnCookies();
@@ -222,7 +234,7 @@ class CtaButton extends Phaser.Group {
 
     spawnCookies() {
         for (var i = 0; i < 4; i++) {
-            var spriteName = 'star-cookie';
+            var spriteName = 'star-particle';
             // var spriteName = Math.random() > 0.45 ? 'star-cookie' : 'box-cookie-full';
             // spriteName = Math.random() > 0.95 ? 'cherry' : spriteName;
 
@@ -236,11 +248,11 @@ class CtaButton extends Phaser.Group {
 
             cookie.angle = Math.random() * 90 - 45;
 
-            var duration = 800;
-            var dissapearAfter = 4000;
+            var duration = 7000;
+            // var dissapearAfter = 4000;
 
-            AnimationsUtil.spawnAndDissapear(this.game, cookie, duration + Math.random() * 100, i * 800, dissapearAfter + 1000 * Math.random(), Phaser.Easing.Quadratic.InOut);
-
+            // AnimationsUtil.spawnAndDissapear(this.game, cookie, duration + Math.random() * 100, i * 800, dissapearAfter + 1000 * Math.random(), Phaser.Easing.Quadratic.InOut);
+            AnimationsUtil.spawnAndFalling(this.game, cookie, duration + Math.random() * 100, i * 800, Phaser.Easing.Quadratic.InOut); 
             // cookie.alpha = 0;
 
             this.fxLayer.add(cookie);

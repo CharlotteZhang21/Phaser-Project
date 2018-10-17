@@ -85,6 +85,27 @@ export function spawnAndDissapear(game, cookie, duration, delay, dissapearAfter,
     }, this);
 }
 
+export function spawnAndFalling(game, star, duration, delay, ease) {
+    star.y = -100 - Math.random() * 100;
+    var targetY = game.global.windowHeight * 1.1 * window.devicePixelRatio;
+    
+    var targetX = game.global.windowWidth * window.devicePixelRatio * 0.5 * Math.random();
+    
+    var targetAngle = 360 + 360 * Math.random() * 2;
+    
+    var tween = game.add.tween(star).to({
+        x: [targetX * (1 + Math.random())],
+        y: targetY,
+        angle: targetAngle
+    }, duration, ease, true, delay).onComplete.add(function(){
+        star.destroy();
+    }, this);
+    return tween;
+}
+
+
+
+
 export function starFloatWithDelayCustom2(game, star, finalX, finalY, finalScale, duration, delay, ease) {
     game.time.events.add(delay, function() {
         star.alpha = 1;

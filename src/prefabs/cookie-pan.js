@@ -20,7 +20,7 @@ class CookiePan extends Phaser.Group {
         this.blockArray = [];
         this.tempSelectedBlocksCoordinates = [];
 
-        this.handTutorial = true;
+        this.canHandTutorial = true;
 
         this.createStacks();
 
@@ -44,47 +44,37 @@ class CookiePan extends Phaser.Group {
 
         this.handInitialScale = this.hand.scale.x;
 
-
-        if (PiecSettings.autoPlay !== undefined && PiecSettings.autoPlay == true && this.handTutorial == true)
-            this.game.time.events.add(2500, function(){
-                this.handFollowWord(PiecSettings.autoPlayWord);   
-            }, this);
-
     }
 
     handFollowWord(coordinate) {
-        var startRow = coordinate.startRow,
-            endRow = coordinate.endRow,
-            startColumn = coordinate.startColumn,
-            endColumn = coordinate.endColumn;
+        console.log(this.canHandTutorial);
+        if(!this.game.global.tutorialCanceled && this.canHandTutorial){
+            this.canHandTutorial = false;
+            var startRow = coordinate.start.r,
+                endRow = coordinate.end.r,
+                startColumn = coordinate.start.c,
+                endColumn = coordinate.end.c;
 
+            
+            this.moveHandDuration = 1000;
+
+            var startingBlock = this.blockArray[startRow][startColumn];
         
-        this.moveHandDuration = 1000;
+            this.moveHandToBeforePress(startingBlock).onComplete.add(function() {
+                this.pressHand(startingBlock).onComplete.add(function(){
 
-        var startingBlock = this.blockArray[startRow][startColumn];
-    
-        this.moveHandToBeforePress(startingBlock).onComplete.add(function() {
-            this.pressHand(startingBlock).onComplete.add(function(){
+                    var endBlock = this.blockArray[endRow][endColumn];
+                    
+                    this.moveHandTo(endBlock, this.moveHandDuration);
+                    this.unpressHandAndMoveOutWithDelay(1000);                
+                }, this);
 
-                var endBlock = this.blockArray[endRow][endColumn];
-                this.moveHandTo(endBlock, this.moveHandDuration);
-                this.unpressHandAndMoveOutWithDelay(1000);                
+
             }, this);
+        }
 
+       
 
-        }, this);
-
-
-        // }
-        // }
-        // this.game.time.events.add(900 + this.moveHandDuration * word.length, function() {
-        //     this.onUpTutorial();
-        // }, this);
-        // this.game.time.events.add(900 + this.moveHandDuration * word.length + 1000, function() {
-        //     this.handTutorial = false;
-        //     this.inputLocked = false;
-        //     this.hand.destroy();
-        // }, this);
     }
 
     pressHand(cookie) {
@@ -121,7 +111,10 @@ class CookiePan extends Phaser.Group {
             this.game.add.tween(this.hand).to({
                 angle: -5,
                 x: this.game.global.windowWidth * window.devicePixelRatio * this.scale.x + this.hand.width * 1.5,
-            }, 800, Phaser.Easing.Quadratic.InOut, true, 200);
+            }, 800, Phaser.Easing.Quadratic.InOut, true, 200)
+            .onComplete.add(function(){
+                this.canHandTutorial = true;
+            }, this);
         }, this);
     }
 
@@ -335,16 +328,26 @@ class CookiePan extends Phaser.Group {
                 // reset every thing
                 this.blockArray[coordinate.row][coordinate.column].used = false;
                 this.blockArray[coordinate.row][coordinate.column].children[1].alpha = 1;
-            }    
+            }  
+
+            // this.resetArray();
+
         }
-        
         this.letters = '';
         this.cookieWord.clearLetters();
         this.tempSelectedBlocksCoordinates = [];
     }
 
-    reposition() {
-
+    resetArray() {
+        for (var i = 0; i < this.blockArray.length; i++) {
+            for(var j = 0; j < this.blockArray[i].length; j++){
+                var block = this.blockArray[i][j];
+                if(block.key != '-'){
+                    block.used = false;
+                    block.children[1].alpha = 1;   
+                }
+            }
+        }
     }
 
     onUpTutorial() {
@@ -359,6 +362,8 @@ class CookiePan extends Phaser.Group {
         var spriteName = 'callout_amazing';
         if( this.wordSelectionDirection == "downToUp" || this.wordSelectionDirection == "leftToRight") {
             spriteName = 'callout_spectacular';
+        }else{
+            return;
         } 
         var callOutBg = new Phaser.Sprite(this.game, 0, 0, 'callout_bg');
         ContainerUtil.fitInContainer(callOutBg, 'win-message', 0.5, 0.5);
@@ -393,9 +398,9 @@ class CookiePan extends Phaser.Group {
 
     wordFlyToGoal(){
         //destroy, get the holes and move other blocks
-        var flyingLetters = []; // for animation purpose            
+                
         var completeLetter = this.letters;
-        // console.log()
+
         for (var i = this.tempSelectedBlocksCoordinates.length - 1; i >= 0; i--) {
 
             var coordinate = this.tempSelectedBlocksCoordinates[i];
@@ -452,8 +457,6 @@ class CookiePan extends Phaser.Group {
             var leftBlock = null;
             if(coordinate.row != 0){
                 topBlock = this.blockArray[coordinate.row-1][coordinate.column];
-            
-                // console.log(topBlock.key + "" + topBlock.used);
             }
             if(coordinate.column != 0){
                 leftBlock = this.blockArray[coordinate.row][coordinate.column-1];
@@ -475,7 +478,8 @@ class CookiePan extends Phaser.Group {
 
                 this.blockArray[0][currentColumn] = this.createLetters("-", block.width, block.x, block.Y, currentRow, 0);
                 
-                Util.printTwoLevelArray(this.blockArray);
+                /*=========== debug =========*/
+                // Util.printTwoLevelArray(this.blockArray); 
 
             }else if(leftBlock != null && !leftBlock.used){
                 //if there's no top block, move left
@@ -497,7 +501,8 @@ class CookiePan extends Phaser.Group {
 
                 this.blockArray[currentRow][0] = this.createLetters("-", block.width, block.x, block.Y, currentRow, 0);
                 
-                Util.printTwoLevelArray(this.blockArray);
+                /*=========== debug =========*/
+                // Util.printTwoLevelArray(this.blockArray); 
             }
 
     }
@@ -507,7 +512,6 @@ class CookiePan extends Phaser.Group {
             for(var j = 0; j < this.blockArray[i].length; j++) {
                 var block = this.blockArray[i][j];
                 if(!block.used && this.isBetweenValues(mouseX, block.x, block.x + block.width) && this.isBetweenValues(mouseY, block.y, block.y + block.height)){
-                    block.used = true;
                     return block;
                 }
             }
@@ -527,6 +531,8 @@ class CookiePan extends Phaser.Group {
     onInputDownLetter(letter) {
         
         this.moveStart = true;
+        if(!this.game.global.tutorialCanceled)
+            this.game.global.tutorialCanceled = true;
         if(this.handTutorial)
             this.handTutorial = false;
 
@@ -561,6 +567,7 @@ class CookiePan extends Phaser.Group {
 
                     var length = this.tempSelectedBlocksCoordinates.length;
                     var lastTempBlock = this.tempSelectedBlocksCoordinates[length - 1];
+                    
 
                     if(coordinate.row == lastTempBlock.row){
                         
@@ -573,6 +580,7 @@ class CookiePan extends Phaser.Group {
                         }
                     }else if(coordinate.column == lastTempBlock.column) {
                         canPushToTempArray = true;
+                        
                         if( coordinate.row == (lastTempBlock.row +1 )){
                             this.wordSelectionDirection = 'upToDown';
                         }else if( coordinate.row == (lastTempBlock.row +1 )){
@@ -587,30 +595,25 @@ class CookiePan extends Phaser.Group {
                     
                     var lastTempBlock = this.tempSelectedBlocksCoordinates[length - 1];
 
-                    console.log(block.key);
-
                     switch(this.wordSelectionDirection) {
                         case 'leftToRight': 
                             if (coordinate.column == (lastTempBlock.column-1)){
-                                block.used = false; // first reset the choosen block
+                                // block.used = false; // first reset the choosen block
                                 block = this.blockArray[lastTempBlock.row][lastTempBlock.column-1];
-                                block.used = true;
+                                // block.used = true;
                                 coordinate = {
                                     row: block.row,
                                     column: block.column
                                 }
                                 canPushToTempArray = true;
                             }
-                            // if (coordinate.row == firstTempBlock.row && coordinate.column == (lastTempBlock.column-1)) {
-                            //     canPushToTempArray = true;
-                            // }
                             break;
                         case 'rightToLeft':
 
                             if (coordinate.column == (lastTempBlock.column+1)){
-                                block.used = false;
+                                // block.used = false;
                                 block = this.blockArray[lastTempBlock.row][lastTempBlock.column+1];
-                                block.used = true;
+                                // block.used = true;
                                 coordinate = {
                                     row: block.row,
                                     column: block.column
@@ -624,28 +627,22 @@ class CookiePan extends Phaser.Group {
                         case 'upToDown':
 
                             if (coordinate.row == (lastTempBlock.row+1)){
-                                block.used = false;
-                                console.log("key" + block.key + block.used);
-                                console.log(lastTempBlock.column);
+                                
                                 block = this.blockArray[lastTempBlock.row+1][lastTempBlock.column];
-                                block.used = true;
-                                console.log("key" + block.key + block.used);
+                                
                                 coordinate = {
                                     row: block.row,
                                     column: block.column
                                 }
                                 canPushToTempArray = true;
                             }
-                            // if (coordinate.row == (lastTempBlock.row + 1 ) && coordinate.column == firstTempBlock.column) {
-                            //     canPushToTempArray = true;
-                            // }
                             break;
                         case 'downToUp':
 
                             if (coordinate.row == (lastTempBlock.row-1)){
-                                block.used = false;
+                             
                                 block = this.blockArray[lastTempBlock.row-1][lastTempBlock.column];
-                                block.used = true;
+                             
                                 coordinate = {
                                     row: block.row,
                                     column: block.column
@@ -664,6 +661,8 @@ class CookiePan extends Phaser.Group {
                 }
 
                 if(canPushToTempArray){
+
+                    block.used = true;
 
                     this.tempSelectedBlocksCoordinates.push(coordinate); 
 

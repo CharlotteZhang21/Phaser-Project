@@ -5,10 +5,10 @@ class Logo extends Phaser.Group {
         super(game);
 
         this.logo = new Phaser.Sprite(this.game, 0, 0, 'logo');
-        this.logo.anchor.set(0.5);
+        // this.logo.anchor.set(0.5);
         this.add(this.logo);
         this.logo.alpha = 0;
-        ContainerUtil.fitInContainerAnchorAtCenter(this.logo, "logo");
+        ContainerUtil.fitInContainer(this.logo, "logo", 0.5, 0.5);
     }
 
     //Animates from "logo" container to "final-logo" container
