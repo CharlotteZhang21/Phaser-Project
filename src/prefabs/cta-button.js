@@ -10,9 +10,9 @@ class CtaButton extends Phaser.Group {
         this.winMessage = winMessage;
         this.logo = logo;
 
-        if (this.game.global.windowWidth < this.game.global.windowHeight) {
-            this.createBackground();
-        }
+        // if (this.game.global.windowWidth < this.game.global.windowHeight) {
+        //     this.createBackground();
+        // }
 
         this.fxLayer = new Phaser.Group(this.game);
 

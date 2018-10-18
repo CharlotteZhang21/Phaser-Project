@@ -99,7 +99,7 @@ class WordGrid extends Phaser.Group {
             for(var h = 0; h < length; h++) {
                 
                 var background = this.game.add.graphics(0, 0);
-                var backgroundColor = "0x000";
+                var backgroundColor = "0xd370e03";
                 // if (PiecSettings.colorPalette !== undefined && PiecSettings.colorPalette.wordBoxDefault !== undefined) {
                 //     backgroundColor = PiecSettings.colorPalette.wordBoxDefault;
                 // }
@@ -138,7 +138,7 @@ class WordGrid extends Phaser.Group {
             this.game.add.tween(group.children[i].scale).to({
                 x: [scale * 0.9, scale],
                 y: [scale * 0.9, scale]
-            }, 500, Phaser.Easing.Linear.InOut, true, i * 100).repeat(-1, 1000);
+            }, 500, Phaser.Easing.Linear.InOut, true, i * 100).repeat(-1, 2000);
         }
     }
 
@@ -161,7 +161,7 @@ class WordGrid extends Phaser.Group {
         var wordBg = new Phaser.Sprite(this.game, 0, 0, 'wordGrid-bg');
         wordBg.anchor.set(0.5);
         ContainerUtil.fitInContainerHeight(wordBg, containerName, 0.5, 0.5);
-
+        // wordBg.alpha = 0;
         wordGrp.add(wordBg);
         var fontWeight = 'bold',
             fontSize = wordGrp.height * 0.8,
@@ -189,6 +189,8 @@ class WordGrid extends Phaser.Group {
             }
         }
         wordText.fill = gradient;
+
+        wordText.bringToTop();
         
         wordGrp.add(wordText);
 
@@ -238,7 +240,7 @@ class WordGrid extends Phaser.Group {
     }
 
     getCompletedWordNum(){
-        console.log(this.completedWords)
+        // console.log(this.completedWords)
         return this.completedWords;
     }
 

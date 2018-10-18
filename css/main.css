@@ -316,7 +316,7 @@ a {
   left: 1%; }
 
 #game-category {
-  width: 60%;
+  width: 40%;
   height: 10%;
   left: 0;
   right: 0; }
@@ -328,15 +328,15 @@ a {
 
 #tiles-area-1 {
   top: 10%;
-  width: 50%; }
+  width: 55%; }
 
 #tiles-area-2 {
   top: 20%;
-  width: 50%; }
+  width: 55%; }
 
 #tiles-area-3 {
   top: 30%;
-  width: 50%; }
+  width: 45%; }
 
 #cascade {
   width: 100vw;
@@ -345,11 +345,22 @@ a {
   right: 0;
   top: 0%; }
 
+.celebration {
+  width: 30%;
+  height: 10%;
+  top: 10%; }
+
+#celebration-1 {
+  left: 20%; }
+
+#celebration-2 {
+  left: 70%; }
+
 #win-message {
   width: 90%;
   left: 0;
   right: 0;
-  top: 30%; }
+  top: 50%; }
 
 #cta-background {
   width: 100%;
@@ -525,37 +536,70 @@ a {
     left: auto;
     right: 2.5vw; }
   #tiles-area {
-    width: 58%;
+    width: 30%;
     top: -8%;
     left: 0%;
     right: auto; }
+  #game-category {
+    width: 40%;
+    left: 8%;
+    right: auto;
+    top: 5%; }
+  #game-category-start {
+    width: 50%; }
+  .tiles {
+    height: 13%;
+    left: 8%;
+    right: auto; }
+  #tiles-area-1 {
+    top: 25%;
+    width: 35%; }
+  #tiles-area-2 {
+    top: 45%;
+    width: 35%; }
+  #tiles-area-3 {
+    top: 65%;
+    left: 11%;
+    width: 30%; }
   #cookie-word {
     height: 10%;
-    top: 5%; }
+    top: 5%;
+    width: 10%;
+    right: 10%;
+    left: auto; }
+  .celebration {
+    top: 20%;
+    width: 20%; }
+  #celebration-1 {
+    left: 30%; }
+  #celebration-2 {
+    right: 30%; }
   #cta-background {
     width: 50%;
     left: 0;
     right: 0; }
-  #instructions {
-    width: 47vw;
-    height: 5vw;
-    bottom: 23vh;
-    left: 2vw;
-    right: auto; }
-  #money-counter {
-    width: 40vw;
-    height: 5vw;
-    left: auto;
-    right: 7vw;
-    top: 2vh; }
+  #hint-button {
+    width: 10%;
+    left: 45%;
+    top: 23%; }
   #cta-container {
     width: 38%;
-    height: 10vw;
+    height: 10%;
     right: 0;
-    left: 0;
+    left: auto;
     bottom: 4%;
     -webkit-transform: none;
     transform: none; }
+  #cta-container-text {
+    width: 30%;
+    height: 10%;
+    bottom: 5%;
+    right: 4%;
+    left: auto; }
+  #cta-container-text-final {
+    width: 29%;
+    height: 8%;
+    bottom: 13%; }
   #cta-container-final,
   #cta-container-final-2 {
     width: 40%;
@@ -578,82 +622,100 @@ a {
   #board-background {
     width: 50%;
     left: auto;
-    right: -5%;
+    right: 2%;
     transform: none;
-    top: -15%;
-    /*bottom: 45%;*/ }
+    bottom: 45%; }
   #deco-01 {
     width: 20%; }
   #deco-02 {
     width: 15%; }
   #deco-03 {
-    width: 18%; } }
+    width: 18%; }
+  #win-message {
+    width: 40%;
+    right: 10%;
+    left: auto; } }
+
+@media all and (max-width: 321px) and (orientation: portrait) {
+  #board-background {
+    width: 80%; }
+  #tiles-area-1 {
+    width: 50%; }
+  #tiles-area-2 {
+    width: 50%; }
+  #tiles-area-3 {
+    width: 40%; } }
+
+@media all and (max-height: 321px) and (orientation: landscape) {
+  #board-background {
+    bottom: 35%; }
+  .tiles {
+    height: 10%; }
+  #tiles-area-1 {
+    width: 30%; }
+  #tiles-area-2 {
+    width: 30%; }
+  #tiles-area-3 {
+    width: 25%; } }
 
 @media all and (min-width: 768px) and (orientation: portrait) {
-  #logo {
-    width: 70%;
-    top: 15%; }
-  #header {
-    width: 65%; }
-  #hand {
-    width: 10%; }
-  #tiles-area {
-    height: 1%;
-    width: 74%;
-    top: -2%; }
-  #hint-area {
-    height: 1%;
-    top: 45%;
-    width: 73%; }
   #board-background {
-    width: 115%;
-    top: 40%; }
-  #cta-container {
-    width: 50%;
-    bottom: 3%; }
-  #cta-container-final {
-    width: 60%;
-    bottom: 15%; }
+    width: 80%;
+    top: 35%; }
   #cta-background {
-    height: 15%; } }
+    height: 15%; }
+  #tiles-area-1 {
+    width: 40%; }
+  #tiles-area-2 {
+    width: 40%; }
+  #tiles-area-3 {
+    width: 35%; } }
 
 @media all and (min-height: 768px) and (orientation: landscape) {
   #board-background {
-    top: 0%; }
-  #tiles-area {
-    width: 56%;
-    top: 12%; }
+    top: 40%; }
+  .tiles {
+    height: 10%; }
   #hand {
     width: 10%; }
   #cta-container-final {
     bottom: 12%; }
-  #logo {
-    width: 55%;
-    top: 10%; } }
+  #cta-container-text-final {
+    bottom: 15%; }
+  #cookie-word {
+    top: 10%;
+    right: 20%; } }
 
-/* iphone X */
+/*iPhone X portrait*/
+@media (min-device-height: 724px) and (max-device-width: 376px) and (min-aspect-ratio: 354 / 724) and (orientation: portrait) {
+  #board-background {
+    bottom: 12%; }
+  #tiles-area-1 {
+    width: 57%; }
+  #tiles-area-2 {
+    width: 57%; }
+  #tiles-area-3 {
+    width: 48%; } }
+
+/*iPhone X landscape*/
 @media (min-aspect-ratio: 724 / 354) and (orientation: landscape) {
-  #header {
-    width: 40%; }
-  #logo {
-    width: 40%;
-    top: 0; }
-  /*#tiles-area {
-        width: 35%;
-        top: 16%;
-    }*/
   #cta-container {
-    width: 33%;
-    height: 9vw;
-    bottom: 2.5%; }
-  /*#board-background {
-        bottom: 50%;
-    }*/
-  #hint-area {
-    top: 60%; }
-  #win-message {
-    width: 50%;
-    top: 35%; } }
+    width: 30%; }
+  #cta-container-text {
+    width: 23%;
+    bottom: 5%; }
+  #cta-container-text-final {
+    bottom: 15%; }
+  #board-background {
+    bottom: 53%; }
+  #cookie-word {
+    top: 3%; }
+  #celebration-1 {
+    left: 20%; }
+  #celebration-2 {
+    right: 20%; }
+  #game-category {
+    width: 34%; } }
 
 @media all and (orientation: landscape) {
   #vungle-header.landscape-light a {

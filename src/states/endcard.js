@@ -40,8 +40,8 @@ class Endcard extends Phaser.State {
         this.ctaLayer = new Phaser.Group(this.game);
         this.game.add.existing(this.ctaLayer)
 
-        // this.winMessage = new WinMessage(this.game);
-        // this.game.add.existing(this.winMessage);
+        this.winMessage = new WinMessage(this.game);
+        this.game.add.existing(this.winMessage);
 
         this.logo = new Logo(this.game);
         this.game.add.existing(this.logo);
@@ -72,23 +72,13 @@ class Endcard extends Phaser.State {
         this.game.world.bringToTop(this.ctaLayer);
 
 
-        // this.cta.spawnCookies();
-        // this.spawnCookies();
-        this.game.time.events.loop(Phaser.Timer.SECOND * 3, function(){
+        this.game.time.events.loop(5000, function(){
             this.spawnCookies();
         }, this);
         this.game.world.bringToTop(this.cookiePan);
-        // this.game.world.bringToTop(this.winMessage);
-        // this.game.world.bringToTop(this.logo);
+        this.game.world.bringToTop(this.winMessage);
+        this.game.world.bringToTop(this.logo);
 
-        // this.darkOverlay = new DarkOverlay(this.game);
-        // this.game.add.existing(this.darkOverlay);
-
-        // this.game.world.bringToTop(this.tooltipLayer);
-
-        // this.game.global.tutorialCanceled = false;
-
-        // // this.tooltip.moveHandToItem(this.game.global.items[8]);
         var waitForAutoplay = 2500;
         // if (this.game.global.windowWidth > this.game.global.windowHeight){
         //     waitForAutoplay = 2400;
@@ -114,7 +104,7 @@ class Endcard extends Phaser.State {
         //         this.logo.animate();
         //     }, this);
         // }, this);
-
+        // this.onBoardComplete();
         if (PiecSettings.timer !== undefined) {
             this.game.time.events.add(4000, function() {
                 document.getElementById("vungle-close").className = "visible";
@@ -166,7 +156,9 @@ class Endcard extends Phaser.State {
 
     onBoardComplete() {
         this.hintButton.animate();
-        console.log('completed');
+        this.winMessage.showWinMessage();
+        this.winMessage.spawnStars('celebration-1');
+        this.winMessage.spawnStars('celebration-2');   
         this.game.time.events.add(800, function() {
             this.wordGrid.animate();
             // this.cookiePan.animate();
@@ -185,9 +177,9 @@ class Endcard extends Phaser.State {
                 }
             }, this);
         }, this);
-        this.game.time.events.add(600, function() {
-            // this.winMessage.showWinMessage();
-        }, this);
+        // this.game.time.events.add(600, function() {
+            
+        // }, this);
     }
 
 }

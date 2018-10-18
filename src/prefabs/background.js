@@ -9,6 +9,7 @@ class Background extends Phaser.Group {
 
         this.add(background);
 
+
         var initialWidth = this.width;
         var initialHeight = this.height;
 
@@ -31,8 +32,11 @@ class Background extends Phaser.Group {
                 this.scale.x = this.scale.y;
             }
             this.x = this.game.global.windowWidth * window.devicePixelRatio / 2 - this.width / 2;
-            this.y = this.game.global.windowHeight * window.devicePixelRatio / 2 - this.height / 2;
+            this.y = this.game.global.windowHeight * window.devicePixelRatio / 2 - this.height / 2 - 100;
         }
+
+        background.alpha = 0;
+        this.game.add.tween(background).to({alpha: 1}, 100, Phaser.Easing.Linear.None, true, 100);
     }
 
 }

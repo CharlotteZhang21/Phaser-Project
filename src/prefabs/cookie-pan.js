@@ -47,8 +47,9 @@ class CookiePan extends Phaser.Group {
     }
 
     handFollowWord(coordinate) {
-        console.log(this.canHandTutorial);
+        
         if(!this.game.global.tutorialCanceled && this.canHandTutorial){
+            
             this.canHandTutorial = false;
             var startRow = coordinate.start.r,
                 endRow = coordinate.end.r,
@@ -313,6 +314,11 @@ class CookiePan extends Phaser.Group {
     onUp() {
         this.moveStart = false;
 
+        if(!this.handTutorial)
+            this.handTutorial = false;
+        if(this.game.global.tutorialCanceled)
+            this.game.global.tutorialCanceled = false;
+
         if(this.checkWordIsCorrect()){
             this.wordFlyToGoal();
 
@@ -379,14 +385,14 @@ class CookiePan extends Phaser.Group {
         callOut.scale.x = 0;
         callOut.scale.y = 0; 
 
-        this.game.add.tween(callOutBg.scale).to({x: [0, bgScale]}, 500, Phaser.Easing.Quadratic.InOut, true, 0)
+        this.game.add.tween(callOutBg.scale).to({x: [0, bgScale]}, 800, Phaser.Easing.Quadratic.InOut, true, 0)
         .onComplete.add(function(){
             this.game.add.tween(callOutBg).to({alpha: 0}, 500, Phaser.Easing.Linear.Out, true, 0)
                                         .onComplete.add(function(){
                                             callOutBg.destroy();
                                         },this)
         },this);
-        this.game.add.tween(callOut.scale).to({x: callOutScale, y: callOutScale}, 500, Phaser.Easing.Quadratic.InOut, true, 300).onComplete.add(function(){
+        this.game.add.tween(callOut.scale).to({x: callOutScale, y: callOutScale}, 800, Phaser.Easing.Quadratic.InOut, true, 300).onComplete.add(function(){
             this.game.add.tween(callOut).to({alpha: 0}, 500, Phaser.Easing.Linear.Out, true, 0)
                                         .onComplete.add(function(){
                                             callOut.destroy();

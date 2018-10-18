@@ -85,6 +85,7 @@ export function spawnAndDissapear(game, cookie, duration, delay, dissapearAfter,
     }, this);
 }
 
+// leaves falling
 export function spawnAndFalling(game, star, duration, delay, ease) {
     star.y = -100 - Math.random() * 100;
     var targetY = game.global.windowHeight * 1.1 * window.devicePixelRatio;
@@ -102,8 +103,6 @@ export function spawnAndFalling(game, star, duration, delay, ease) {
     }, this);
     return tween;
 }
-
-
 
 
 export function starFloatWithDelayCustom2(game, star, finalX, finalY, finalScale, duration, delay, ease) {
@@ -148,4 +147,51 @@ export function starFloatWithDelayCustom(game, star, finalX, finalY, finalScale,
 
 export function starFloatWithDelay(game, star, finalX, finalY, finalScale, duration, delay) {
     this.starFloatWithDelayCustom(game, star, finalX, finalY, finalScale, duration, delay, Phaser.Easing.Quadratic.Out);
+}
+
+export function burstAndFalling(game, star, burstX, burstY, initialX, initialY, finalScale, duration, delay) {
+    var targetY = game.global.windowHeight * 1.1 * window.devicePixelRatio;
+    var targetX = game.global.windowWidth * window.devicePixelRatio * 0.5 * Math.random();
+    
+    var fallingPointX = burstX * 2 - initialX;
+    var fallingPointY = burstY > initialY? burstY * 2 - initialY : initialY;
+
+    var targetAngle = 360 + 360 * Math.random() * 2;
+    var fallingSpeed = 2000 + 1000 * Math.random();
+    game.time.events.add(delay, function() {
+        star.alpha = 0;
+
+        game.add.tween(star).to({  
+            alpha: [0.5, 1],
+            x: [burstX],
+            angle: 180 + 180 * Math.random(),
+        }, duration * 2, Phaser.Easing.Back.out, true, 0)
+        .onComplete.add(function(){
+            game.add.tween(star).to({
+                x: [fallingPointX],
+                angle: targetAngle,
+            }, fallingSpeed, Phaser.Easing.Linear.Out, true, delay).onComplete.add(function(){
+                // star.destroy();
+            }, this);
+        })
+
+        game.add.tween(star).to({  
+            y: [burstY],
+        }, duration, Phaser.Easing.Back.out, true, 0)
+        .onComplete.add(function(){
+            game.add.tween(star).to({
+                y: [targetY],
+            }, fallingSpeed, Phaser.Easing.Linear.Out, true, delay).onComplete.add(function(){
+                star.destroy();
+            }, this);
+        })
+
+
+        game.add.tween(star.scale).to({
+            x: finalScale,
+            y: finalScale
+        }, duration, Phaser.Easing.Quadratic.Out, true, 0);
+        
+
+    }, this);
 }
