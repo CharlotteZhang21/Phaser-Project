@@ -94,21 +94,19 @@ class Endcard extends Phaser.State {
 
         }, this);
 
-        // this.game.time.events.add(3800, function() {
-        //     this.cta.animate();
-        //     this.goal.hide();
-        //     this.background.zoomOutBackground();
-        //     this.darkOverlay.show();
-        //     this.game.time.events.add(500, function() {
-        //         this.winMessage.showWinMessage();
-        //         this.logo.animate();
-        //     }, this);
-        // }, this);
-        // this.onBoardComplete();
-        if (PiecSettings.timer !== undefined) {
-            this.game.time.events.add(4000, function() {
-                document.getElementById("vungle-close").className = "visible";
+        if(PiecSettings.autoPlay != null)
+            this.game.global.idleTimer = this.game.time.events.add(PiecSettings.autoPlay, function() {
+                console.log(PiecSettings.autoPlay);
+                this.endCard();
             }, this);
+
+
+        if (PiecSettings.timer !== undefined && PiecSettings.timer) {
+            this.game.time.events.add(PiecSettings.timerDuration, function() {
+                document.getElementById("vungle-close").className = "";
+            }, this);
+        }else {
+            document.getElementById("vungle-close").className = "";
         }
     }
 
@@ -161,7 +159,7 @@ class Endcard extends Phaser.State {
         this.winMessage.spawnStars('celebration-2');   
         this.game.time.events.add(800, function() {
             this.wordGrid.animate();
-            // this.cookiePan.animate();
+            
             this.game.time.events.add(400, function() {
                 // this.cta.showDecos();
             }, this);
@@ -179,6 +177,17 @@ class Endcard extends Phaser.State {
         }, this);
         // this.game.time.events.add(600, function() {
             
+        // }, this);
+    }
+
+    endCard() {
+        this.hintButton.animate();
+        this.wordGrid.animate();
+        this.cookiePan.animate();
+        this.cta.animate();
+        this.game.time.events.add(200, function() {
+            this.logo.animate();
+        }, this);        
         // }, this);
     }
 

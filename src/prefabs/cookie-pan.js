@@ -13,7 +13,7 @@ class CookiePan extends Phaser.Group {
         
         this.letters = "";
         this.moveStart = false;
-
+        this.inputLocked = false;
 
         this.containerName = 'board-background';
 
@@ -356,14 +356,6 @@ class CookiePan extends Phaser.Group {
         }
     }
 
-    onUpTutorial() {
-        this.wordStarted = false;
-        if (this.letters != "") {
-            this.game.onWordComplete.dispatch(this.letters);
-            this.inputLocked = true;
-        }
-    }
-
     callOut() {
         var spriteName = 'callout_amazing';
         if( this.wordSelectionDirection == "downToUp" || this.wordSelectionDirection == "leftToRight") {
@@ -535,13 +527,51 @@ class CookiePan extends Phaser.Group {
  
     //Word started
     onInputDownLetter(letter) {
-        
-        this.moveStart = true;
-        if(!this.game.global.tutorialCanceled)
-            this.game.global.tutorialCanceled = true;
-        if(this.handTutorial)
-            this.handTutorial = false;
 
+        if(this.game.global.idleTimer != null ) {
+            //cancel the autoplay timer
+            this.game.time.events.remove(this.game.global.idleTimer);
+        }
+        if(!this.inputLocked){
+
+            this.moveStart = true;
+            if(!this.game.global.tutorialCanceled)
+                this.game.global.tutorialCanceled = true;
+            if(this.handTutorial)
+                this.handTutorial = false;
+   
+        }
+    }
+
+    animate(){
+        this.inputLocked = true;
+        // if (this.game.global.windowHeight > this.game.global.windowWidth) {
+        //     this.game.add.tween(this.).to({
+        //         x: [-this.width],
+        //     }, 1400, Phaser.Easing.Quadratic.InOut, true, 0);
+        // } else {
+        //     console.log('here');
+        //     this.game.add.tween(this).to({
+        //         x: [this.game.global.windowWidth * window.devicePixelRatio + this.width],
+        //     }, 1400, Phaser.Easing.Quadratic.InOut, true, 0);
+        // }
+
+        for (var i = 0; i < this.blockArray.length; i++) {
+            
+            for (var j = 0; j < this.blockArray[i].length; j++) {
+               
+                var block = this.blockArray[i][j];
+                if (this.game.global.windowHeight > this.game.global.windowWidth) {
+                    this.game.add.tween(block).to({
+                        x: [-this.width],
+                    }, 1400, Phaser.Easing.Quadratic.InOut, true, i * 50 * (1 + Math.random()));
+                } else {
+                    this.game.add.tween(block).to({
+                        x: [this.game.global.windowWidth * window.devicePixelRatio + this.width],
+                    }, 1400, Phaser.Easing.Quadratic.InOut, true, i * 50 * (1 + Math.random()));
+                }
+            }
+        }
     }
 
 

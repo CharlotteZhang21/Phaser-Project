@@ -437,9 +437,23 @@ class WordGrid extends Phaser.Group {
     }
 
     animate() {
-        var initialY = this.y;
+        
+        for (var i = 0; i < PiecSettings.goals.length; i++) {
+
+            var words = this.targetWords[PiecSettings.goals[i]].children;
+
+            for (var j = 0; j < words.length; j++) {
+                var word = words[j];
+
+                this.game.add.tween(word).to({
+                    alpha: 0,
+                }, 1200, Phaser.Easing.Quadratic.InOut, true, 200);
+            }
+            
+        }
+
         this.game.add.tween(this).to({
-            y: -this.height * 1.1,
+            alpha: 0,
         }, 1200, Phaser.Easing.Quadratic.InOut, true, 200);
     }
 

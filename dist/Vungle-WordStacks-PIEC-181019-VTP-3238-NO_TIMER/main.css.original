@@ -243,7 +243,7 @@ body {
   -o-background-size: cover;
   background-size: cover;
   background-color: black;
-  /*background-image: url(bg.jpg);*/ }
+  /*background-image: url(../assets/bg.jpg);*/ }
 
 canvas {
   display: block;
@@ -251,6 +251,15 @@ canvas {
 
 a {
   text-decoration: none; }
+
+#vungle-close {
+  opacity: 1;
+  pointer-events: all; }
+
+#vungle-close.hide {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-In-Out; }
 
 #wrap {
   position: absolute;
@@ -360,7 +369,7 @@ a {
   width: 90%;
   left: 0;
   right: 0;
-  top: 30%; }
+  top: 50%; }
 
 #cta-background {
   width: 100%;
@@ -582,12 +591,6 @@ a {
     width: 10%;
     left: 45%;
     top: 23%; }
-  #money-counter {
-    width: 40vw;
-    height: 5vw;
-    left: auto;
-    right: 7vw;
-    top: 2vh; }
   #cta-container {
     width: 38%;
     height: 10%;
@@ -638,7 +641,9 @@ a {
   #deco-03 {
     width: 18%; }
   #win-message {
-    width: 60%; } }
+    width: 40%;
+    right: 10%;
+    left: auto; } }
 
 @media all and (max-width: 321px) and (orientation: portrait) {
   #board-background {

@@ -102,10 +102,14 @@ class CtaButton extends Phaser.Group {
         var innerBox = .8;
         var offsetVertical = 0.1;
     
-
-        var text = Localisation.getLocalisedCta().text.toUpperCase();
-        var lang = Localisation.getLocalisedCta().lang;
-        var font = Localisation.getLocalisedCta().font;
+        if(PiecSettings.dynamicLocalisation){
+            var text = Localisation.getLocalisedCta().text.toUpperCase();
+            var font = Localisation.getLocalisedCta().font;        
+        }else {
+            var text = 'DOWNLOAD';
+            var font = PiecSettings.fontFamily;
+        }
+        
         var style = {
             font: this.button.height + "px " + font,
             fill: "#fff",

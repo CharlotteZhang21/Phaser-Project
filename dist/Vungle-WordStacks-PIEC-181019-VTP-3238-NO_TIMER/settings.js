@@ -2,12 +2,13 @@ var PiecSettings = PiecSettings || {};
 
 PiecSettings.version = "-";
 
-// PiecSettings.autoPlay = {
-//     activateAfter: 4000,
-// }
+PiecSettings.autoPlay = 10000;
+PiecSettings.dynamicLocalisation = true;
 
-PiecSettings.timer = true;
-PiecSettings.asoi = false;
+PiecSettings.timer = false;
+PiecSettings.timerDuration = 4000;
+
+PiecSettings.asoi = true;
 
 PiecSettings.fontColor = "#ffffff";
 PiecSettings.fontFamily = "Contemporary"; //Make sure that this font is on the css and that there is a div that uses it. (preload-font div)
@@ -25,22 +26,6 @@ PiecSettings.ctaBackground = true; // set false when you don't want bg;
 PiecSettings.useAlternativeAssetForSolvedLetters = false; //Can use alternative asset for letters on the board (as opposed to letters on the pan). This will be the letter with "-2" behind
                                                         // E.g.: "a.png" alternative version would be "a-2.png".
 
-// PiecSettings.tooltip = [
-//     {
-//         instructionsSrc: 'instructions1.png',
-//         src: 'overlay1.png',
-//     },
-//     {
-//         instructionsSrc: 'instructions2.png',
-//         src: 'overlay1.png',
-//     },
-//     {
-//         instructionsSrc: 'instructions3.png',
-//         src: 'overlay2.png',
-//     },
-// ];
-
-PiecSettings.autoPlay = true;
 PiecSettings.hint = [{
         start: {r: 0 ,c: 4},
         end: {r: 4 ,c: 4},
